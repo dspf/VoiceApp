@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceTranslate Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .sidebar-nav a .icon {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .change {
+            font-size: 0.8rem;
+            color: #28a745;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .action-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-section h3 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Translation Interface */
+        .translation-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .translation-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .translation-panel h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mic-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .mic-button.recording {
+            background: #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .transcript-area {
+            min-height: 200px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            overflow-y: auto;
+        }
+
+        /* Credits and Usage */
+        .usage-chart {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .translation-interface {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🎙️ VoiceTranslate</div>
+            <div class="user-info">green@company.com</div>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="nav-link active" data-page="dashboard">
+                <span class="icon">📊</span> Dashboard
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="translate">
+                <span class="icon">🎤</span> Live Translation
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="transcripts">
+                <span class="icon">📝</span> Transcripts
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="sessions">
+                <span class="icon">🔗</span> Sessions
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="analytics">
+                <span class="icon">📈</span> Analytics
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="billing">
+                <span class="icon">💳</span> Billing & Usage
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="settings">
+                <span class="icon">⚙️</span> Settings
+            </a></li>
+            <li><a href="#" class="nav-link" data-page="support">
+                <span class="icon">🆘</span> Support
+            </a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="header-actions">
+                <span>🟢 Active</span>
+                <span>Credits: 2,450</span>
+                <a href="#" class="btn btn-primary" onclick="showPage('translate')">
+                    <span>🎤</span> Start Translation
+                </a>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="content">
+            <div id="dashboard" class="page active">
+                <div class="stats-grid" style="align-items: stretch;">
+                    <!-- Grouped Stat Cards -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2.2rem; background: #667eea; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                                🔗
+                            </div>
+                            <div>
+                                <h3>Total Sessions</h3>
+                                <div class="value">1,247</div>
+                                <div class="change">+12% from last month</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2.2rem; background: #764ba2; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                                ⏱️
+                            </div>
+                            <div>
+                                <h3>Minutes Translated</h3>
+                                <div class="value">45,832</div>
+                                <div class="change">+8% from last month</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2.2rem; background: #28a745; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                                🌐
+                            </div>
+                            <div>
+                                <h3>Languages Used</h3>
+                                <div class="value">28</div>
+                                <div class="change">+3 new languages</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2.2rem; background: #ffc107; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                                🎯
+                            </div>
+                            <div>
+                                <h3>Accuracy Rate</h3>
+                                <div class="value">99.2%</div>
+                                <div class="change">+0.3% improvement</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart Card -->
+                    <div class="stat-card" style="grid-column: span 2; min-width: 320px;">
+                        <h3 style="margin-bottom: 1rem;">📈 Sessions & Minutes Trend</h3>
+                        <canvas id="dashboardChart" height="120"></canvas>
+                    </div>
+                </div>
+                <script>
+                    // Simple Chart.js line chart for dashboard
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (window.Chart) {
+                            const ctx = document.getElementById('dashboardChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                                    datasets: [
+                                        {
+                                            label: 'Sessions',
+                                            data: [180, 220, 300, 400, 350, 420, 500],
+                                            borderColor: '#667eea',
+                                            backgroundColor: 'rgba(102,126,234,0.1)',
+                                            tension: 0.4,
+                                            fill: true,
+                                            pointRadius: 3
+                                        },
+                                        {
+                                            label: 'Minutes',
+                                            data: [3200, 4100, 5000, 6000, 5800, 6700, 7200],
+                                            borderColor: '#764ba2',
+                                            backgroundColor: 'rgba(118,75,162,0.1)',
+                                            tension: 0.4,
+                                            fill: true,
+                                            pointRadius: 3
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    plugins: {
+                                        legend: { display: true, position: 'bottom' }
+                                    },
+                                    scales: {
+                                        y: { beginAtZero: true }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                </script>
+                <!-- Chart.js CDN (add if not already present) -->
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <div class="quick-actions">
+                    <div class="action-card" onclick="showPage('translate')">
+                        <div class="icon">🎤</div>
+                        <h4>Start Translation</h4>
+                        <p>Begin real-time translation</p>
+                    </div>
+                    <div class="action-card" onclick="showPage('sessions')">
+                        <div class="icon">🔗</div>
+                        <h4>Create Session</h4>
+                        <p>Generate access key</p>
+                    </div>
+                    <div class="action-card" onclick="showPage('transcripts')">
+                        <div class="icon">📝</div>
+                        <h4>View Transcripts</h4>
+                        <p>Access saved conversations</p>
+                    </div>
+                    <div class="action-card" onclick="showPage('analytics')">
+                        <div class="icon">📊</div>
+                        <h4>Analytics</h4>
+                        <p>View usage statistics</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Recent Sessions</h3>
+                        <a href="#" class="btn btn-secondary" onclick="showPage('sessions')">View All</a>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Languages</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Team Meeting #1247</td>
+                                <td>EN → ES</td>
+                                <td>45 min</td>
+                                <td><span class="status completed">Completed</span></td>
+                                <td>2 hours ago</td>
+                            </tr>
+                            <tr>
+                                <td>Client Call #1246</td>
+                                <td>FR → EN</td>
+                                <td>32 min</td>
+                                <td><span class="status completed">Completed</span></td>
+                                <td>5 hours ago</td>
+                            </tr>
+                            <tr>
+                                <td>Interview #1245</td>
+                                <td>JA → EN</td>
+                                <td>28 min</td>
+                                <td><span class="status processing">Processing</span></td>
+                                <td>Yesterday</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Live Translation Page -->
+            <div id="translate" class="page">
+                <div class="translation-interface">
+                    <div class="translation-panel">
+                        <h3>🎤 Source Language</h3>
+                        <div class="language-selector">
+                            <select id="targetLanguage">
+                                <option value="es">Spanish</option>
+                                <option value="en">English</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese</option>
+                                <option value="af">Afrikaans</option>
+                                <option value="zu">Zulu</option>
+                                <option value="xh">Xhosa</option>
+                                <option value="st">Southern Sotho (Sesotho)</option>
+                                <option value="tn">Tswana (Setswana)</option>
+                                <option value="ts">Tsonga (Xitsonga)</option>
+                                <option value="ss">Swati (siSwati)</option>
+                                <option value="ve">Venda (Tshivenda)</option>
+                                <option value="nr">Southern Ndebele (isiNdebele)</option>
+                                <option value="nso">Northern Sotho (Sepedi)</option>
+                            </select>
+                        </div>
+                        <button class="mic-button" id="micButton" onclick="toggleRecording()">🎤</button>
+                        <div class="transcript-area" id="sourceTranscript">
+                            <p style="color: #666; text-align: center; margin-top: 80px;">Click the microphone to start speaking...</p>
+                        </div>
+                    </div>
+
+                    <div class="translation-panel">
+                        <h3>🌐 Target Language</h3>
+                        <div class="language-selector">
+                            <select id="targetLanguage">
+                                <option value="es">Spanish</option>
+                                <option value="en">English</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese</option>
+                                <option value="af">Afrikaans</option>
+                                <option value="zu">Zulu</option>
+                                <option value="xh">Xhosa</option>
+                                <option value="st">Southern Sotho (Sesotho)</option>
+                                <option value="tn">Tswana (Setswana)</option>
+                                <option value="ts">Tsonga (Xitsonga)</option>
+                                <option value="ss">Swati (siSwati)</option>
+                                <option value="ve">Venda (Tshivenda)</option>
+                                <option value="nr">Southern Ndebele (isiNdebele)</option>
+                                <option value="nso">Northern Sotho (Sepedi)</option>
+                            </select>
+                        </div>
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <button class="btn btn-secondary" onclick="playTranslation()">🔊 Play Audio</button>
+                        </div>
+                        <div class="transcript-area" id="targetTranscript">
+                            <p style="color: #666; text-align: center; margin-top: 80px;">Translation will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="saveTranscript()">💾 Save Transcript</button>
+                    <button class="btn btn-secondary" onclick="shareSession()">🔗 Share Session</button>
+                    <button class="btn btn-secondary" onclick="exportTranscript()">📄 Export</button>
+                </div>
+            </div>
+
+            <!-- Transcripts Page -->
+            <div id="transcripts" class="page">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>My Transcripts</h3>
+                        <div>
+                            <input type="search" placeholder="Search transcripts..." style="padding: 0.5rem; margin-right: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+                            <button class="btn btn-primary">🔍 Search</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Languages</th>
+                                <th>Duration</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Q4 Planning Meeting</td>
+                                <td>EN → ES</td>
+                                <td>45 min</td>
+                                <td>Dec 15, 2024</td>
+                                <td>
+                                    <button class="btn btn-secondary">👁️ View</button>
+                                    <button class="btn btn-secondary">📄 Export</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Client Presentation</td>
+                                <td>FR → EN</td>
+                                <td>32 min</td>
+                                <td>Dec 14, 2024</td>
+                                <td>
+                                    <button class="btn btn-secondary">👁️ View</button>
+                                    <button class="btn btn-secondary">📄 Export</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Product Interview</td>
+                                <td>JA → EN</td>
+                                <td>28 min</td>
+                                <td>Dec 13, 2024</td>
+                                <td>
+                                    <button class="btn btn-secondary">👁️ View</button>
+                                    <button class="btn btn-secondary">📄 Export</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sessions Page -->
+            <div id="sessions" class="page">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Translation Sessions</h2>
+                    <button class="btn btn-primary" onclick="createNewSession()">➕ Create New Session</button>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Active Sessions</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Session ID</th>
+                                <th>Name</th>
+                                <th>Participants</th>
+                                <th>Status</th>
+                                <th>Access Key</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#SES-1001</td>
+                                <td>Team Standup</td>
+                                <td>5 participants</td>
+                                <td><span class="status processing">Active</span></td>
+                                <td>ABC-123-XYZ</td>
+                                <td>
+                                    <button class="btn btn-secondary">🔗 Join</button>
+                                    <button class="btn btn-secondary">⚙️ Settings</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analytics" class="page">
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem;">
+                    <!-- Group 1: Usage Summary -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+                            <h3>This Month</h3>
+                            <div class="value">2,847</div>
+                            <div class="change">Minutes translated</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #85d262 100%); color: #fff;">
+                            <h3>Avg Session</h3>
+                            <div class="value">23 min</div>
+                            <div class="change">Duration</div>
+                        </div>
+                    </div>
+                    <!-- Group 2: Language Insights -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: #fff;">
+                            <h3>Most Used</h3>
+                            <div class="value">EN→ES</div>
+                            <div class="change">Language pair</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); color: #fff;">
+                            <h3>Peak Hours</h3>
+                            <div class="value">2-4 PM</div>
+                            <div class="change">UTC timezone</div>
+                        </div>
+                    </div>
+                    <!-- Group 3: Top Languages Pie Chart -->
+                    <div class="stat-card" style="grid-column: span 2; min-width: 320px;">
+                        <h3 style="margin-bottom: 1rem;">🌍 Top Languages Used</h3>
+                        <canvas id="languagesPieChart" height="120"></canvas>
+                    </div>
+                </div>
+
+                <div class="usage-chart" style="margin-top: 2rem;">
+                    <h3>📈 Usage Over Time</h3>
+                    <canvas id="usageLineChart" height="120"></canvas>
+                </div>
+
+                <div class="table-container" style="margin-top: 2rem;">
+                    <div class="table-header">
+                        <h3>Top Users by Minutes</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Minutes</th>
+                                <th>Sessions</th>
+                                <th>Most Used Language</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Jane Smith</td>
+                                <td>1,120</td>
+                                <td>48</td>
+                                <td>EN→ES</td>
+                            </tr>
+                            <tr>
+                                <td>John Doe</td>
+                                <td>980</td>
+                                <td>41</td>
+                                <td>FR→EN</td>
+                            </tr>
+                            <tr>
+                                <td>Maria Garcia</td>
+                                <td>747</td>
+                                <td>32</td>
+                                <td>EN→PT</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <script>
+                    // Pie Chart: Top Languages Used
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (window.Chart) {
+                            // Pie chart for languages
+                            const langCtx = document.getElementById('languagesPieChart').getContext('2d');
+                            new Chart(langCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['English', 'Spanish', 'French', 'German', 'Japanese', 'Chinese'],
+                                    datasets: [{
+                                        data: [38, 27, 14, 9, 7, 5],
+                                        backgroundColor: [
+                                            '#667eea', '#28a745', '#ffc107', '#764ba2', '#ff9800', '#dc3545'
+                                        ]
+                                    }]
+                                },
+                                options: {
+                                    plugins: {
+                                        legend: { display: true, position: 'bottom' }
+                                    },
+                                    cutout: '70%'
+                                }
+                            });
+
+                            // Line chart for usage over time
+                            const usageCtx = document.getElementById('usageLineChart').getContext('2d');
+                            new Chart(usageCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                                    datasets: [{
+                                        label: 'Minutes Translated',
+                                        data: [320, 410, 500, 600, 580, 670, 720],
+                                        borderColor: '#667eea',
+                                        backgroundColor: 'rgba(102,126,234,0.1)',
+                                        tension: 0.4,
+                                        fill: true,
+                                        pointRadius: 3
+                                    }]
+                                },
+                                options: {
+                                    plugins: {
+                                        legend: { display: false }
+                                    },
+                                    scales: {
+                                        y: { beginAtZero: true }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </div>
+
+            <!-- Billing Page -->
+            <div id="billing" class="page">
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h3>💳 Current Plan</h3>
+                        <div style="text-align: center; padding: 2rem;">
+                            <h2 style="color: #667eea;">Professional Plan</h2>
+                            <p style="font-size: 2rem; margin: 1rem 0;">R1000/month</p>
+                            <p>✅ 5,000 minutes/month</p>
+                            <p>✅ 100+ languages</p>
+                            <p>✅ Premium support</p>
+                            <button class="btn btn-primary" style="margin-top: 1rem;">Upgrade Plan</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>📊 Usage This Month</h3>
+                        <div style="margin: 1rem 0;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Translation Minutes</span>
+                                <span>2,847 / 5,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 57%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin: 1rem 0;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>API Calls</span>
+                                <span>12,450 / 50,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 2rem;">
+                    <div class="table-header">
+                        <h3>Billing History</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dec 1, 2024</td>
+                                <td>Professional Plan</td>
+                                <td>R1000</td>
+                                <td><span class="status completed">Paid</span></td>
+                                <td><button class="btn btn-secondary">📄 Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>Nov 1, 2024</td>
+                                <td>Professional Plan</td>
+                                <td>R1000</td>
+                                <td><span class="status completed">Paid</span></td>
+                                <td><button class="btn btn-secondary">📄 Download</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings" class="page">
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h3>👤 Profile Settings</h3>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="john.doe@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Company</label>
+                            <input type="text" value="Acme Corp">
+                        </div>
+                        <button class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🔧 Translation Settings</h3>
+                        <div class="form-group">
+                            <label>Default Source Language</label>
+                            <select>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Default Target Language</label>
+                            <select>
+                                <option value="es">Spanish</option>
+                                <option value="en">English</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Audio Quality</label>
+                            <select>
+                                <option value="high">High Quality</option>
+                                <option value="medium">Medium Quality</option>
+                                <option value="low">Low Quality (Faster)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Enable real-time translation
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Auto-save transcripts
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">Save Settings</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🔔 Notification Settings</h3>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Email notifications
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"> SMS notifications
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Session completion alerts
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Usage limit warnings
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">Update Notifications</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🔐 Security Settings</h3>
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary">Change Password</button>
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #dee2e6;">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox"> Enable two-factor authentication
+                                </label>
+                            </div>
+                            <button class="btn btn-secondary">Setup 2FA</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🔑 API Access</h3>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" value="vt_sk_live_••••••••••••••••" readonly>
+                                <button class="btn btn-secondary">👁️ Show</button>
+                                <button class="btn btn-secondary">📋 Copy</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Webhook URL</label>
+                            <input type="url" placeholder="https://your-app.com/webhook">
+                        </div>
+                        <button class="btn btn-primary">Regenerate API Key</button>
+                        <button class="btn btn-secondary">View API Docs</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>📥 Data Export</h3>
+                        <p style="margin-bottom: 1rem; color: #666;">Export your data in various formats</p>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn btn-secondary">📄 Export All Transcripts (PDF)</button>
+                            <button class="btn btn-secondary">📊 Export Usage Data (CSV)</button>
+                            <button class="btn btn-secondary">🗃️ Export Complete Account Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Page -->
+            <div id="support" class="page" style="overflow: visible;">
+                <div class="form-grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <!-- Left: Contact Support & My Tickets -->
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Contact Support -->
+                        <div class="form-section" style="min-width: 320px;">
+                            <h3>🆘 Contact Support</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">
+                                Need help? Submit a ticket and our team will get back to you as soon as possible.
+                            </p>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <select>
+                                    <option value="">Select a topic</option>
+                                    <option value="technical">Technical Issue</option>
+                                    <option value="billing">Billing Question</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority</label>
+                                <select>
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea rows="5" placeholder="Describe your issue or question..." style="min-height: 120px;"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Attach Files</label>
+                                <input type="file" multiple>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;">Submit Ticket</button>
+                        </div>
+
+                        <!-- My Support Tickets -->
+                        <div class="form-section" style="min-width: 320px;">
+                            <h3>🎫 My Support Tickets</h3>
+                            <div class="table-container" style="overflow-x: auto;">
+                                <table style="min-width: 400px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket ID</th>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#12345</td>
+                                            <td>Audio quality issue</td>
+                                            <td><span class="status processing">In Progress</span></td>
+                                            <td>Dec 15, 2024</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#12344</td>
+                                            <td>Billing question</td>
+                                            <td><span class="status completed">Resolved</span></td>
+                                            <td>Dec 10, 2024</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Support Options & Knowledge Base -->
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Support Options -->
+                        <div class="form-section" style="min-width: 280px;">
+                            <h3>📞 Support Options</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                    <h4>💬 Live Chat</h4>
+                                    <p>Available 24/7 for urgent issues</p>
+                                    <button class="btn btn-primary" style="width: 100%;">Start Chat</button>
+                                </div>
+                                <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                    <h4>📧 Email Support</h4>
+                                    <p style="word-break: break-all;">support@voicetranslate.com</p>
+                                    <p>Response within 2 hours</p>
+                                </div>
+                                <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                                    <h4>📞 Phone Support</h4>
+                                    <p>+1 (555) 123-4567</p>
+                                    <p>Mon-Fri, 9AM-6PM EST</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Knowledge Base -->
+                        <div class="form-section" style="min-width: 280px;">
+                            <h3>📚 Knowledge Base</h3>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    📖 Getting Started Guide
+                                </a>
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    🎤 How to Use Live Translation
+                                </a>
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    🔧 API Documentation
+                                </a>
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    ❓ Frequently Asked Questions
+                                </a>
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    🔒 Privacy & Security
+                                </a>
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                    💳 Billing & Pricing
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'translate': 'Live Translation',
+                'transcripts': 'Transcripts',
+                'sessions': 'Sessions',
+                'analytics': 'Analytics',
+                'billing': 'Billing & Usage',
+                'settings': 'Settings',
+                'support': 'Support'
+            };
+            document.getElementById('page-title').textContent = titles[pageId];
+        }
+
+        // Add click handlers to nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        // Translation functionality
+        let isRecording = false;
+        let recordingInterval;
+
+        function toggleRecording() {
+            const micButton = document.getElementById('micButton');
+            const sourceTranscript = document.getElementById('sourceTranscript');
+            const targetTranscript = document.getElementById('targetTranscript');
+            
+            if (!isRecording) {
+                // Start recording
+                isRecording = true;
+                micButton.classList.add('recording');
+                sourceTranscript.innerHTML = '<p style="color: #dc3545;">🔴 Recording... Speak now</p>';
+                
+                // Simulate real-time transcription
+                let transcriptText = '';
+                const samplePhrases = [
+                    "Hello, how are you today?",
+                    "I hope you're having a great day.",
+                    "Let's discuss the project requirements.",
+                    "Thank you for your time."
+                ];
+                
+                let phraseIndex = 0;
+                recordingInterval = setInterval(() => {
+                    if (phraseIndex < samplePhrases.length) {
+                        transcriptText += samplePhrases[phraseIndex] + ' ';
+                        sourceTranscript.innerHTML = `<p>${transcriptText}</p>`;
+                        
+                        // Simulate translation
+                        const translations = [
+                            "Hola, ¿cómo estás hoy?",
+                            "Espero que tengas un gran día.",
+                            "Discutamos los requisitos del proyecto.",
+                            "Gracias por tu tiempo."
+                        ];
+                        
+                        setTimeout(() => {
+                            let translatedText = '';
+                            for (let i = 0; i <= phraseIndex; i++) {
+                                translatedText += translations[i] + ' ';
+                            }
+                            targetTranscript.innerHTML = `<p>${translatedText}</p>`;
+                        }, 500);
+                        
+                        phraseIndex++;
+                    } else {
+                        stopRecording();
+                    }
+                }, 3000);
+            } else {
+                stopRecording();
+            }
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('micButton').classList.remove('recording');
+            clearInterval(recordingInterval);
+        }
+
+        function playTranslation() {
+            alert('🔊 Playing translated audio...');
+        }
+
+        function saveTranscript() {
+            alert('💾 Transcript saved successfully!');
+        }
+
+        function shareSession() {
+            alert('🔗 Session link copied to clipboard: https://app.voicetranslate.com/session/abc123');
+        }
+
+        function exportTranscript() {
+            alert('📄 Transcript exported as PDF');
+        }
+
+        function createNewSession() {
+            const sessionId = 'SES-' + Math.floor(Math.random() * 10000);
+            const accessKey = Math.random().toString(36).substring(2, 15).toUpperCase();
+            alert(`✅ New session created!\n\nSession ID: ${sessionId}\nAccess Key: ${accessKey}\n\nShare this access key with participants.`);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some interactive elements
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+                });
+            });
+
+            // Simulate real-time updates
+            setInterval(() => {
+                const onlineStatus = document.querySelector('.header-actions span');
+                if (onlineStatus.textContent.includes('Online')) {
+                    onlineStatus.style.color = '#28a745';
+                }
+            }, 1000);
+        });
+
+        // Form validations and interactions
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.style.borderColor = '#667eea';
+                this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.style.borderColor = '#e9ecef';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Button click animations
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255,255,255,0.5);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation keyframes
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+    </script>
+</body>
+</html>
