@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceTranslate - Real-time Voice Translation & Transcription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Enhanced Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Enhanced Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header id="header">
+        <nav class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">🎙️</span>
+                VoiceTranslater
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#types">Use Cases</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="#" class="btn btn-secondary" onclick="showLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+                <a href="#" class="btn btn-primary" onclick="showSignup()">
+                    <i class="fas fa-rocket"></i>
+                    Get Started
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Enhanced Hero Section -->
+    <section class="hero">
+        <div class="hero-slideshow">
+            <div class="slide active">
+                <img src="https://media.licdn.com/dms/image/D4D12AQEWkuflLf-lEQ/article-cover_image-shrink_720_1280/0/1711553271307?e=2147483647&v=beta&t=ReikZ6gv3siJjmeZD-uY9ba5JDUmVoo71GGVKqysEm8" alt="Global Communication">
+                <div class="slide-caption glass">
+                    <span>🌍 Speak any language, anywhere.</span>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://framerusercontent.com/images/sll39AcAgp3xW43Eq2B6xsZsFLo.webp" alt="AI Voice Technology">
+                <div class="slide-caption glass">
+                    <span>🤖 AI-powered real-time translation & transcription.</span>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://as1.ftcdn.net/v2/jpg/06/38/86/12/1000_F_638861291_zf88ooLuEh7uS4LsijBw7pu4lK6MwJjy.jpg" alt="Team Collaboration">
+                <div class="slide-caption glass">
+                    <span>👥 Effortless collaboration for global teams.</span>
+                </div>
+            </div>
+            
+            <div class="slideshow-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in-up" style="--stagger-delay: 1;">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Real-Time Translation</h3>
+                    <p>Instant voice-to-voice translation with 99.5% accuracy across 100+ languages</p>
+                </div>
+                <div class="feature-card fade-in-up" style="--stagger-delay: 2;">
+                    <div class="feature-icon">📝</div>
+                    <h3>Smart Transcription</h3>
+                    <p>AI-powered transcription with speaker identification and timestamping</p>
+                </div>
+                <div class="feature-card fade-in-up" style="--stagger-delay: 3;">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Collaboration Tools</h3>
+                    <p>Share access keys for multi-person meetings and conversations</p>
+                </div>
+                <div class="feature-card fade-in-up" style="--stagger-delay: 4;">
+                    <div class="feature-icon">💾</div>
+                    <h3>Multiple Export Formats</h3>
+                    <p>Save transcripts as Word, PDF, or Google Docs with formatting</p>
+                </div>
+                <div class="feature-card fade-in-up" style="--stagger-delay: 5;">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Enterprise Security</h3>
+                    <p>End-to-end encryption and GDPR compliance for sensitive conversations</p>
+                </div>
+                <div class="feature-card fade-in-up" style="--stagger-delay: 6;">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Sub-second response times with cloud-based processing</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Conversation Types -->
+    <section class="conversation-types" id="types">
+        <div class="container">
+            <h2 class="section-title">Perfect for Every Conversation</h2>
+            <div class="types-grid">
+                <div class="type-card fade-in-up" style="--stagger-delay: 1;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">💬</div>
+                    <h4>Casual Conversations</h4>
+                    <p>Informal chats between friends and family</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 2;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🏢</div>
+                    <h4>Professional Meetings</h4>
+                    <p>Business meetings, interviews, client discussions</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 3;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🛟</div>
+                    <h4>Customer Support</h4>
+                    <p>Help desks, tech support, service inquiries</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 4;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">📈</div>
+                    <h4>Sales Calls</h4>
+                    <p>Promotional pitches and telemarketing</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 5;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🎤</div>
+                    <h4>Interviews</h4>
+                    <p>Job interviews, journalism, research surveys</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 6;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">📞</div>
+                    <h4>Conference Calls</h4>
+                    <p>Multi-person business discussions</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 7;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🎙️</div>
+                    <h4>Podcasts & Shows</h4>
+                    <p>Structured discussions for audiences</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 8;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🎮</div>
+                    <h4>Gaming Voice Chat</h4>
+                    <p>Real-time coordination among gamers</p>
+                </div>
+                <div class="type-card fade-in-up" style="--stagger-delay: 9;">
+                    <div style="font-size:2.2rem; margin-bottom:1rem;">🧠</div>
+                    <h4>Therapy Sessions</h4>
+                    <p>Mental health support via voice calls</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #667eea;">Create Your Account</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company (Optional)</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                <div class="form-group">
+                    <label for="useCase">Primary Use Case</label>
+                    <select id="useCase" name="useCase" required>
+                        <option value="">Select your main use case</option>
+                        <option value="business">Business Meetings</option>
+                        <option value="customer-support">Customer Support</option>
+                        <option value="education">Education & Training</option>
+                        <option value="media">Media & Content</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: #666;">
+                Already have an account? <a href="#" onclick="showLogin()" style="color: #667eea;">Sign in</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Enhanced Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #667eea;">Welcome Back</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="window.location.href='Dashboard.html'; return false;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: #666;">
+                Don't have an account? <a href="#" onclick="showSignup()" style="color: #667eea;">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 VoiceTranslate. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+
+    <script src="./src/main.js"></script>
+</body>
+</html>
