@@ -1,7 +1,12 @@
+// Import authentication functions
+import { checkAuthState } from './auth.js'
+
 // Enhanced Loading Animation
 window.addEventListener('load', function() {
     setTimeout(() => {
         document.getElementById('loadingOverlay').classList.add('hidden');
+        // Check authentication state after page loads
+        checkAuthState();
     }, 1000);
 });
 
@@ -100,35 +105,18 @@ window.onclick = function(event) {
 }
 
 // Enhanced Form handling
-document.getElementById('signupForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    // Add loading state to button
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-    submitBtn.disabled = true;
+// Form handling is now managed by auth.js
+document.addEventListener('DOMContentLoaded', function() {
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
     
-    setTimeout(() => {
-        alert('Account created successfully! Welcome to VoiceTranslate.');
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        closeModal();
-    }, 2000);
-});
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-    submitBtn.disabled = true;
+    if (signupForm) {
+        signupForm.addEventListener('submit', window.handleSignup);
+    }
     
-    setTimeout(() => {
-        alert('Login successful! Redirecting to dashboard...');
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        closeModal();
-    }, 1500);
+    if (loginForm) {
+        loginForm.addEventListener('submit', window.handleLogin);
+    }
 });
 
 // Enhanced Header scroll effect
