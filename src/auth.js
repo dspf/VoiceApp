@@ -125,10 +125,10 @@ export async function handleSignup(event) {
       showSuccess('Account created successfully! Please check your email to verify your account.')
       form.reset()
       
-      // Close modal after 2 seconds
+      // Redirect to dashboard after successful signup
       setTimeout(() => {
-        closeModal()
-      }, 2000)
+        window.location.href = 'Dashboard.html'
+      }, 1500)
     }
   } catch (error) {
     console.error('Signup error:', error)
