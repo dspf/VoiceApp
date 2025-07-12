@@ -36,10 +36,76 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
+        /* Profile Section at Top */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-section:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #667eea;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+        }
+
+        .company-name {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .user-info {
@@ -77,6 +143,35 @@
             font-size: 1.1rem;
         }
 
+        /* Logout Button */
+        .logout-section {
+            position: absolute;
+            bottom: 1rem;
+            left: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
         /* Main Content */
         .main-content {
             margin-left: 260px;
@@ -101,6 +196,15 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+        }
+
+        .credits-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .btn {
@@ -146,6 +250,174 @@
 
         .page.active {
             display: block;
+        }
+
+        /* Profile Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .profile-form-section {
+            margin-bottom: 2rem;
+        }
+
+        .profile-form-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-picture-upload {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-picture-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #667eea;
+            font-weight: bold;
+            border: 4px solid #e9ecef;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-picture-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .billing-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .billing-status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .billing-status.inactive {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         /* Dashboard Cards */
@@ -287,19 +559,6 @@
             color: #333;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 0.8rem;
@@ -309,8 +568,6 @@
             transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
@@ -437,19 +694,157 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .mobile-menu-btn {
             display: none;
         }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 Profile Settings</h2>
+                <button class="close" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <!-- Profile Picture Section -->
+                    <div class="profile-form-section">
+                        <div class="profile-picture-upload">
+                            <div class="profile-picture-large" id="profilePictureLarge">
+                                <span id="profileInitialsLarge">JD</span>
+                                <img id="profileImageLarge" style="display: none;" />
+                            </div>
+                            <div>
+                                <input type="file" id="profilePictureInput" accept="image/*" style="display: none;" onchange="handleProfilePictureChange(event)">
+                                <button type="button" class="upload-btn" onclick="document.getElementById('profilePictureInput').click()">
+                                    📷 Change Picture
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="profile-form-section">
+                        <h3>📋 Personal Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company">
+                        </div>
+                        <div class="form-group">
+                            <label for="useCase">Primary Use Case</label>
+                            <select id="useCase" name="useCase" required>
+                                <option value="">Select your main use case</option>
+                                <option value="business">Business Meetings</option>
+                                <option value="customer-support">Customer Support</option>
+                                <option value="education">Education & Training</option>
+                                <option value="media">Media & Content</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Account Status -->
+                    <div class="profile-form-section">
+                        <h3>💳 Account Status</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Billing Status</label>
+                                <div class="billing-status active" id="billingStatus">
+                                    🟢 Active - Professional Plan
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Available Credits</label>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;" id="availableCredits">
+                                    2,450 credits
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Usage This Month</label>
+                            <div style="margin: 0.5rem 0;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Translation Minutes</span>
+                                    <span id="usageMinutes">2,847 / 5,000</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="usageProgress" style="width: 57%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="save-text">💾 Save Changes</span>
+                            <span class="save-loading" style="display: none;">
+                                <span class="spinner"></span> Saving...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
+            <!-- Profile Section -->
+            <div class="profile-section" onclick="openProfileModal()">
+                <div class="profile-picture" id="profilePicture">
+                    <span id="profileInitials">JD</span>
+                    <img id="profileImage" style="display: none;" />
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">John Doe</div>
+                    <div class="profile-role" id="profileRole">Professional Plan</div>
+                </div>
+            </div>
+            
             <div class="logo">🎙️ VoiceTranslate</div>
-            <div class="user-info">green@company.com</div>
+            <div class="company-name" id="companyName">Acme Corporation</div>
         </div>
         <ul class="sidebar-nav">
             <li><a href="#" class="nav-link active" data-page="dashboard">
@@ -477,6 +872,13 @@
                 <span class="icon">🆘</span> Support
             </a></li>
         </ul>
+        
+        <!-- Logout Section -->
+        <div class="logout-section">
+            <button class="logout-btn" onclick="handleLogout()">
+                <span>🚪</span> Sign Out
+            </button>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -489,7 +891,7 @@
             </div>
             <div class="header-actions">
                 <span>🟢 Active</span>
-                <span>Credits: 2,450</span>
+                <div class="credits-display" id="headerCredits">Credits: 2,450</div>
                 <a href="#" class="btn btn-primary" onclick="showPage('translate')">
                     <span>🎤</span> Start Translation
                 </a>
@@ -667,9 +1069,9 @@
                     <div class="translation-panel">
                         <h3>🎤 Source Language</h3>
                         <div class="language-selector">
-                            <select id="targetLanguage">
-                                <option value="es">Spanish</option>
+                            <select id="sourceLanguage">
                                 <option value="en">English</option>
+                                <option value="es">Spanish</option>
                                 <option value="fr">French</option>
                                 <option value="de">German</option>
                                 <option value="ja">Japanese</option>
@@ -1297,216 +1699,6 @@
         </div>
     </div>
 
-    <script>
-        // Navigation
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
-            
-            // Update page title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'translate': 'Live Translation',
-                'transcripts': 'Transcripts',
-                'sessions': 'Sessions',
-                'analytics': 'Analytics',
-                'billing': 'Billing & Usage',
-                'settings': 'Settings',
-                'support': 'Support'
-            };
-            document.getElementById('page-title').textContent = titles[pageId];
-        }
-
-        // Add click handlers to nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const pageId = link.getAttribute('data-page');
-                showPage(pageId);
-            });
-        });
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('mobile-open');
-        }
-
-        // Translation functionality
-        let isRecording = false;
-        let recordingInterval;
-
-        function toggleRecording() {
-            const micButton = document.getElementById('micButton');
-            const sourceTranscript = document.getElementById('sourceTranscript');
-            const targetTranscript = document.getElementById('targetTranscript');
-            
-            if (!isRecording) {
-                // Start recording
-                isRecording = true;
-                micButton.classList.add('recording');
-                sourceTranscript.innerHTML = '<p style="color: #dc3545;">🔴 Recording... Speak now</p>';
-                
-                // Simulate real-time transcription
-                let transcriptText = '';
-                const samplePhrases = [
-                    "Hello, how are you today?",
-                    "I hope you're having a great day.",
-                    "Let's discuss the project requirements.",
-                    "Thank you for your time."
-                ];
-                
-                let phraseIndex = 0;
-                recordingInterval = setInterval(() => {
-                    if (phraseIndex < samplePhrases.length) {
-                        transcriptText += samplePhrases[phraseIndex] + ' ';
-                        sourceTranscript.innerHTML = `<p>${transcriptText}</p>`;
-                        
-                        // Simulate translation
-                        const translations = [
-                            "Hola, ¿cómo estás hoy?",
-                            "Espero que tengas un gran día.",
-                            "Discutamos los requisitos del proyecto.",
-                            "Gracias por tu tiempo."
-                        ];
-                        
-                        setTimeout(() => {
-                            let translatedText = '';
-                            for (let i = 0; i <= phraseIndex; i++) {
-                                translatedText += translations[i] + ' ';
-                            }
-                            targetTranscript.innerHTML = `<p>${translatedText}</p>`;
-                        }, 500);
-                        
-                        phraseIndex++;
-                    } else {
-                        stopRecording();
-                    }
-                }, 3000);
-            } else {
-                stopRecording();
-            }
-        }
-
-        function stopRecording() {
-            isRecording = false;
-            document.getElementById('micButton').classList.remove('recording');
-            clearInterval(recordingInterval);
-        }
-
-        function playTranslation() {
-            alert('🔊 Playing translated audio...');
-        }
-
-        function saveTranscript() {
-            alert('💾 Transcript saved successfully!');
-        }
-
-        function shareSession() {
-            alert('🔗 Session link copied to clipboard: https://app.voicetranslate.com/session/abc123');
-        }
-
-        function exportTranscript() {
-            alert('📄 Transcript exported as PDF');
-        }
-
-        function createNewSession() {
-            const sessionId = 'SES-' + Math.floor(Math.random() * 10000);
-            const accessKey = Math.random().toString(36).substring(2, 15).toUpperCase();
-            alert(`✅ New session created!\n\nSession ID: ${sessionId}\nAccess Key: ${accessKey}\n\nShare this access key with participants.`);
-        }
-
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add some interactive elements
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-                });
-            });
-
-            // Simulate real-time updates
-            setInterval(() => {
-                const onlineStatus = document.querySelector('.header-actions span');
-                if (onlineStatus.textContent.includes('Online')) {
-                    onlineStatus.style.color = '#28a745';
-                }
-            }, 1000);
-        });
-
-        // Form validations and interactions
-        document.querySelectorAll('input, select, textarea').forEach(element => {
-            element.addEventListener('focus', function() {
-                this.style.borderColor = '#667eea';
-                this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
-            });
-            
-            element.addEventListener('blur', function() {
-                this.style.borderColor = '#e9ecef';
-                this.style.boxShadow = 'none';
-            });
-        });
-
-        // Button click animations
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                // Create ripple effect
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.cssText = `
-                    position: absolute;
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${x}px;
-                    top: ${y}px;
-                    background: rgba(255,255,255,0.5);
-                    border-radius: 50%;
-                    transform: scale(0);
-                    animation: ripple 0.6s linear;
-                    pointer-events: none;
-                `;
-                
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-
-        // Add ripple animation keyframes
-        const rippleStyle = document.createElement('style');
-        rippleStyle.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(rippleStyle);
-    </script>
+    <script type="module" src="./src/dashboard.js"></script>
 </body>
 </html>
