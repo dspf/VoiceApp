@@ -186,7 +186,10 @@ export async function checkAuthState() {
     const { user, error } = await auth.getCurrentUser()
     
     if (error) {
-      console.error('Auth check error:', error)
+      // Only log unexpected errors, not normal unauthenticated state
+      if (error.message !== 'Auth session missing!') {
+        console.error('Auth check error:', error)
+      }
       return
     }
     
