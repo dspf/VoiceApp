@@ -99,6 +99,11 @@ function updateStatCard(type, value, change) {
         const valueElement = card.querySelector('.value');
         const changeElement = card.querySelector('.change');
         
+        // Add null checks to prevent errors
+        if (!valueElement || !changeElement) {
+            return; // Skip this card if elements are missing
+        }
+        
         if (card.textContent.includes('Total Sessions') && type === 'totalSessions') {
             valueElement.textContent = value.toLocaleString();
             changeElement.textContent = change;
