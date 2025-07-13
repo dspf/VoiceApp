@@ -1,13 +1,16 @@
 import { auth, onAuthStateChange } from './lib/supabase.js'
+import { dashboardAPI } from './lib/dashboard-api.js'
 
 // Global user data
 let currentUser = null;
 let userProfile = null;
+let userSettings = null;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async function() {
     await checkAuthAndLoadProfile();
     initializeDashboard();
+    await loadDashboardData();
 });
 
 // Check authentication and load user profile
@@ -16,7 +19,6 @@ async function checkAuthAndLoadProfile() {
         const { user, error } = await auth.getCurrentUser();
         
         if (error || !user) {
-            // Redirect to login if not authenticated
             window.location.href = 'index.html';
             return;
         }
@@ -28,22 +30,148 @@ async function checkAuthAndLoadProfile() {
         
         if (profileError) {
             console.error('Error loading profile:', profileError);
-            // Use default profile data
             userProfile = {
                 full_name: user.email.split('@')[0],
                 company: 'Not specified',
-                use_case: 'general'
+                use_case: 'general',
+                plan_type: 'professional',
+                billing_status: 'active',
+                available_credits: 2450,
+                monthly_limit_minutes: 5000
             };
         } else {
             userProfile = profile;
         }
         
-        // Update UI with user data
+        // Load user settings
+        const { data: settings, error: settingsError } = await dashboardAPI.getUserSettings(user.id);
+        if (!settingsError) {
+            userSettings = settings;
+        }
+        
         updateUserInterface();
         
     } catch (error) {
         console.error('Auth check failed:', error);
         window.location.href = 'index.html';
+    }
+}
+
+// Load all dashboard data
+async function loadDashboardData() {
+    if (!currentUser) return;
+    
+    try {
+        // Load dashboard stats
+        await loadDashboardStats();
+        
+        // Load recent sessions
+        await loadRecentSessions();
+        
+        // Load current usage
+        await loadCurrentUsage();
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+    }
+}
+
+// Load dashboard statistics
+async function loadDashboardStats() {
+    const { data: stats, error } = await dashboardAPI.getDashboardStats(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading stats:', error);
+        return;
+    }
+    
+    // Update stat cards
+    updateStatCard('totalSessions', stats.totalSessions || 0, '+12% from last month');
+    updateStatCard('totalMinutes', stats.totalMinutes || 0, '+8% from last month');
+    updateStatCard('languagesUsed', '28', '+3 new languages');
+    updateStatCard('accuracyRate', '99.2%', '+0.3% improvement');
+}
+
+// Update stat card values
+function updateStatCard(type, value, change) {
+    const cards = document.querySelectorAll('.stat-card');
+    cards.forEach(card => {
+        const valueElement = card.querySelector('.value');
+        const changeElement = card.querySelector('.change');
+        
+        if (card.textContent.includes('Total Sessions') && type === 'totalSessions') {
+            valueElement.textContent = value.toLocaleString();
+            changeElement.textContent = change;
+        } else if (card.textContent.includes('Minutes Translated') && type === 'totalMinutes') {
+            valueElement.textContent = value.toLocaleString();
+            changeElement.textContent = change;
+        } else if (card.textContent.includes('Languages Used') && type === 'languagesUsed') {
+            valueElement.textContent = value;
+            changeElement.textContent = change;
+        } else if (card.textContent.includes('Accuracy Rate') && type === 'accuracyRate') {
+            valueElement.textContent = value;
+            changeElement.textContent = change;
+        }
+    });
+}
+
+// Load recent sessions
+async function loadRecentSessions() {
+    const { data: sessions, error } = await dashboardAPI.getSessions(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading sessions:', error);
+        return;
+    }
+    
+    // Update recent sessions table
+    const tbody = document.querySelector('#dashboard table tbody');
+    if (tbody && sessions && sessions.length > 0) {
+        tbody.innerHTML = sessions.slice(0, 3).map(session => `
+            <tr>
+                <td>${session.session_name}</td>
+                <td>${session.source_language.toUpperCase()} → ${session.target_language.toUpperCase()}</td>
+                <td>${session.duration_minutes} min</td>
+                <td><span class="status ${session.status}">${session.status.charAt(0).toUpperCase() + session.status.slice(1)}</span></td>
+                <td>${formatTimeAgo(session.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Load current usage for billing page
+async function loadCurrentUsage() {
+    const { data: usage, error } = await dashboardAPI.getCurrentUsage(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading usage:', error);
+        return;
+    }
+    
+    // Update usage progress bars
+    const minutesUsed = usage.minutes_used || 0;
+    const apiCalls = usage.api_calls_count || 0;
+    const monthlyLimit = userProfile?.monthly_limit_minutes || 5000;
+    const apiLimit = 50000;
+    
+    updateProgressBar('minutes', minutesUsed, monthlyLimit);
+    updateProgressBar('api', apiCalls, apiLimit);
+}
+
+// Update progress bar
+function updateProgressBar(type, used, limit) {
+    const percentage = Math.min((used / limit) * 100, 100);
+    
+    if (type === 'minutes') {
+        const progressBar = document.querySelector('.progress-fill');
+        const usageText = document.querySelector('.progress-bar').previousElementSibling;
+        
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+        }
+        if (usageText) {
+            usageText.querySelector('span:last-child').textContent = `${used.toLocaleString()} / ${limit.toLocaleString()}`;
+        }
     }
 }
 
@@ -58,14 +186,21 @@ function updateUserInterface() {
     const profileInitials = document.getElementById('profileInitials');
     
     if (profileName) profileName.textContent = userProfile.full_name || 'User';
-    if (profileRole) profileRole.textContent = 'Professional Plan';
+    if (profileRole) profileRole.textContent = userProfile.plan_type || 'Professional Plan';
     if (companyName) companyName.textContent = userProfile.company || 'No Company';
     
     // Update profile initials
     if (profileInitials) {
         const initials = getInitials(userProfile.full_name || 'User');
         profileInitials.textContent = initials;
-        document.getElementById('profileInitialsLarge').textContent = initials;
+        const profileInitialsLarge = document.getElementById('profileInitialsLarge');
+        if (profileInitialsLarge) profileInitialsLarge.textContent = initials;
+    }
+    
+    // Update header credits
+    const creditsDisplay = document.querySelector('.header-actions span:nth-child(2)');
+    if (creditsDisplay) {
+        creditsDisplay.textContent = `Credits: ${(userProfile.available_credits || 2450).toLocaleString()}`;
     }
     
     // Update profile form
@@ -88,7 +223,6 @@ function updateProfileForm() {
     const form = document.getElementById('profileForm');
     if (!form) return;
     
-    // Fill form fields
     const fullNameInput = form.querySelector('#fullName');
     const emailInput = form.querySelector('#email');
     const companyInput = form.querySelector('#company');
@@ -110,8 +244,8 @@ async function handleProfileUpdate(event) {
     const saveLoading = submitBtn.querySelector('.save-loading');
     
     // Show loading state
-    saveText.style.display = 'none';
-    saveLoading.style.display = 'inline-flex';
+    if (saveText) saveText.style.display = 'none';
+    if (saveLoading) saveLoading.style.display = 'inline-flex';
     submitBtn.disabled = true;
     
     try {
@@ -146,8 +280,8 @@ async function handleProfileUpdate(event) {
         showNotification('Failed to update profile. Please try again.', 'error');
     } finally {
         // Hide loading state
-        saveText.style.display = 'inline';
-        saveLoading.style.display = 'none';
+        if (saveText) saveText.style.display = 'inline';
+        if (saveLoading) saveLoading.style.display = 'none';
         submitBtn.disabled = false;
     }
 }
@@ -166,49 +300,294 @@ async function updateUserProfile(profileData) {
     }
 }
 
-// Handle profile picture change
-function handleProfilePictureChange(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+// Translation functionality
+let isRecording = false;
+let recordingInterval;
+let currentSessionId = null;
+
+async function toggleRecording() {
+    const micButton = document.getElementById('micButton');
+    const sourceTranscript = document.getElementById('sourceTranscript');
+    const targetTranscript = document.getElementById('targetTranscript');
     
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-        showNotification('Please select a valid image file.', 'error');
-        return;
-    }
+    if (!micButton || !sourceTranscript || !targetTranscript) return;
     
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-        showNotification('Image size must be less than 5MB.', 'error');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const imageUrl = e.target.result;
+    if (!isRecording) {
+        // Create new session
+        const sourceLanguage = document.getElementById('sourceLanguage')?.value || 'en';
+        const targetLanguage = document.getElementById('targetLanguage')?.value || 'es';
         
-        // Update profile pictures
-        const profileImage = document.getElementById('profileImage');
-        const profileImageLarge = document.getElementById('profileImageLarge');
-        const profileInitials = document.getElementById('profileInitials');
-        const profileInitialsLarge = document.getElementById('profileInitialsLarge');
+        const { data: session, error } = await dashboardAPI.createSession(currentUser.id, {
+            name: `Session ${new Date().toLocaleTimeString()}`,
+            sourceLanguage,
+            targetLanguage
+        });
         
-        if (profileImage && profileImageLarge) {
-            profileImage.src = imageUrl;
-            profileImageLarge.src = imageUrl;
-            profileImage.style.display = 'block';
-            profileImageLarge.style.display = 'block';
-            profileInitials.style.display = 'none';
-            profileInitialsLarge.style.display = 'none';
+        if (error) {
+            showNotification('Failed to create session', 'error');
+            return;
         }
-    };
+        
+        currentSessionId = session.id;
+        
+        // Start recording
+        isRecording = true;
+        micButton.classList.add('recording');
+        sourceTranscript.innerHTML = '<p style="color: #dc3545;">🔴 Recording... Speak now</p>';
+        
+        // Simulate real-time transcription
+        let transcriptText = '';
+        const samplePhrases = [
+            "Hello, how are you today?",
+            "I hope you're having a great day.",
+            "Let's discuss the project requirements.",
+            "Thank you for your time."
+        ];
+        
+        let phraseIndex = 0;
+        recordingInterval = setInterval(() => {
+            if (phraseIndex < samplePhrases.length) {
+                transcriptText += samplePhrases[phraseIndex] + ' ';
+                sourceTranscript.innerHTML = `<p>${transcriptText}</p>`;
+                
+                // Simulate translation
+                const translations = [
+                    "Hola, ¿cómo estás hoy?",
+                    "Espero que tengas un gran día.",
+                    "Discutamos los requisitos del proyecto.",
+                    "Gracias por tu tiempo."
+                ];
+                
+                setTimeout(() => {
+                    let translatedText = '';
+                    for (let i = 0; i <= phraseIndex; i++) {
+                        translatedText += translations[i] + ' ';
+                    }
+                    targetTranscript.innerHTML = `<p>${translatedText}</p>`;
+                }, 500);
+                
+                phraseIndex++;
+            } else {
+                stopRecording();
+            }
+        }, 3000);
+    } else {
+        stopRecording();
+    }
+}
+
+function stopRecording() {
+    isRecording = false;
+    const micButton = document.getElementById('micButton');
+    if (micButton) {
+        micButton.classList.remove('recording');
+    }
+    clearInterval(recordingInterval);
     
-    reader.readAsDataURL(file);
+    // Update session duration
+    if (currentSessionId) {
+        dashboardAPI.updateSession(currentSessionId, {
+            status: 'completed',
+            duration_minutes: 5, // Simulated duration
+            completed_at: new Date().toISOString()
+        });
+    }
+}
+
+async function saveTranscript() {
+    if (!currentSessionId) {
+        showNotification('No active session to save', 'error');
+        return;
+    }
+    
+    const sourceText = document.getElementById('sourceTranscript')?.textContent || '';
+    const translatedText = document.getElementById('targetTranscript')?.textContent || '';
+    
+    if (!sourceText || !translatedText) {
+        showNotification('No transcript content to save', 'error');
+        return;
+    }
+    
+    const { data, error } = await dashboardAPI.saveTranscript(currentUser.id, {
+        sessionId: currentSessionId,
+        title: `Transcript ${new Date().toLocaleString()}`,
+        sourceLanguage: 'en',
+        targetLanguage: 'es',
+        sourceText,
+        translatedText,
+        duration: 5
+    });
+    
+    if (error) {
+        showNotification('Failed to save transcript', 'error');
+    } else {
+        showNotification('💾 Transcript saved successfully!', 'success');
+    }
+}
+
+async function createNewSession() {
+    const { data: session, error } = await dashboardAPI.createSession(currentUser.id, {
+        name: `New Session ${new Date().toLocaleString()}`
+    });
+    
+    if (error) {
+        showNotification('Failed to create session', 'error');
+    } else {
+        showNotification(`✅ New session created! Session ID: ${session.access_key}`, 'success');
+        // Reload sessions if on sessions page
+        if (document.getElementById('sessions').classList.contains('active')) {
+            loadSessionsPage();
+        }
+    }
+}
+
+// Load sessions page data
+async function loadSessionsPage() {
+    const { data: sessions, error } = await dashboardAPI.getSessions(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading sessions:', error);
+        return;
+    }
+    
+    const tbody = document.querySelector('#sessions table tbody');
+    if (tbody) {
+        tbody.innerHTML = sessions.map(session => `
+            <tr>
+                <td>${session.access_key}</td>
+                <td>${session.session_name}</td>
+                <td>${session.participants_count} participants</td>
+                <td><span class="status ${session.status}">${session.status.charAt(0).toUpperCase() + session.status.slice(1)}</span></td>
+                <td>${session.access_key}</td>
+                <td>
+                    <button class="btn btn-secondary" onclick="joinSession('${session.id}')">🔗 Join</button>
+                    <button class="btn btn-secondary" onclick="editSession('${session.id}')">⚙️ Settings</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Load transcripts page data
+async function loadTranscriptsPage() {
+    const { data: transcripts, error } = await dashboardAPI.getTranscripts(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading transcripts:', error);
+        return;
+    }
+    
+    const tbody = document.querySelector('#transcripts table tbody');
+    if (tbody) {
+        tbody.innerHTML = transcripts.map(transcript => `
+            <tr>
+                <td>${transcript.title}</td>
+                <td>${transcript.source_language.toUpperCase()} → ${transcript.target_language.toUpperCase()}</td>
+                <td>${transcript.duration_minutes} min</td>
+                <td>${formatDate(transcript.created_at)}</td>
+                <td>
+                    <button class="btn btn-secondary" onclick="viewTranscript('${transcript.id}')">👁️ View</button>
+                    <button class="btn btn-secondary" onclick="exportTranscript('${transcript.id}')">📄 Export</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Load billing page data
+async function loadBillingPage() {
+    const { data: billingHistory, error } = await dashboardAPI.getBillingHistory(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading billing history:', error);
+        return;
+    }
+    
+    const tbody = document.querySelector('#billing table tbody');
+    if (tbody) {
+        tbody.innerHTML = billingHistory.map(bill => `
+            <tr>
+                <td>${formatDate(bill.created_at)}</td>
+                <td>${bill.description}</td>
+                <td>R${bill.amount}</td>
+                <td><span class="status ${bill.status}">${bill.status.charAt(0).toUpperCase() + bill.status.slice(1)}</span></td>
+                <td><button class="btn btn-secondary">📄 Download</button></td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Load support page data
+async function loadSupportPage() {
+    const { data: tickets, error } = await dashboardAPI.getSupportTickets(currentUser.id);
+    
+    if (error) {
+        console.error('Error loading support tickets:', error);
+        return;
+    }
+    
+    const tbody = document.querySelector('#support table tbody');
+    if (tbody) {
+        tbody.innerHTML = tickets.map(ticket => `
+            <tr>
+                <td>${ticket.ticket_number}</td>
+                <td>${ticket.subject}</td>
+                <td><span class="status ${ticket.status.replace('_', '-')}">${ticket.status.replace('_', ' ').charAt(0).toUpperCase() + ticket.status.replace('_', ' ').slice(1)}</span></td>
+                <td>${formatDate(ticket.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Load settings page data
+async function loadSettingsPage() {
+    if (!userSettings) return;
+    
+    // Update settings form
+    const settingsForm = document.querySelector('#settings form');
+    if (settingsForm) {
+        const inputs = settingsForm.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            const name = input.name || input.id;
+            if (userSettings[name] !== undefined) {
+                if (input.type === 'checkbox') {
+                    input.checked = userSettings[name];
+                } else {
+                    input.value = userSettings[name];
+                }
+            }
+        });
+    }
+    
+    // Update API key display
+    const apiKeyInput = document.querySelector('input[value*="vt_sk_live_"]');
+    if (apiKeyInput && userSettings.api_key) {
+        apiKeyInput.value = userSettings.api_key.substring(0, 20) + '••••••••••••••••';
+    }
+}
+
+// Utility functions
+function formatTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    if (diffInHours < 48) return 'Yesterday';
+    return `${Math.floor(diffInHours / 24)} days ago`;
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
 }
 
 // Show notification
 function showNotification(message, type = 'info') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.style.cssText = `
@@ -225,7 +604,6 @@ function showNotification(message, type = 'info') {
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     `;
     
-    // Set background color based on type
     const colors = {
         success: '#28a745',
         error: '#dc3545',
@@ -236,10 +614,8 @@ function showNotification(message, type = 'info') {
     notification.style.backgroundColor = colors[type] || colors.info;
     notification.textContent = message;
     
-    // Add to page
     document.body.appendChild(notification);
     
-    // Auto remove after 5 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => {
@@ -249,20 +625,6 @@ function showNotification(message, type = 'info') {
         }, 300);
     }, 5000);
 }
-
-// Add notification animations
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-`;
-document.head.appendChild(notificationStyles);
 
 // Modal functions
 function openProfileModal() {
@@ -292,7 +654,6 @@ async function handleLogout() {
                 showNotification('Failed to sign out. Please try again.', 'error');
             } else {
                 showNotification('Signed out successfully!', 'success');
-                // Redirect will be handled by auth state change listener
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
@@ -347,6 +708,25 @@ function showPage(pageId) {
     const pageTitle = document.getElementById('page-title');
     if (pageTitle) {
         pageTitle.textContent = titles[pageId] || 'Dashboard';
+    }
+    
+    // Load page-specific data
+    switch(pageId) {
+        case 'sessions':
+            loadSessionsPage();
+            break;
+        case 'transcripts':
+            loadTranscriptsPage();
+            break;
+        case 'billing':
+            loadBillingPage();
+            break;
+        case 'support':
+            loadSupportPage();
+            break;
+        case 'settings':
+            loadSettingsPage();
+            break;
     }
 }
 
@@ -442,79 +822,9 @@ function toggleSidebar() {
     }
 }
 
-// Translation functionality
-let isRecording = false;
-let recordingInterval;
-
-function toggleRecording() {
-    const micButton = document.getElementById('micButton');
-    const sourceTranscript = document.getElementById('sourceTranscript');
-    const targetTranscript = document.getElementById('targetTranscript');
-    
-    if (!micButton || !sourceTranscript || !targetTranscript) return;
-    
-    if (!isRecording) {
-        // Start recording
-        isRecording = true;
-        micButton.classList.add('recording');
-        sourceTranscript.innerHTML = '<p style="color: #dc3545;">🔴 Recording... Speak now</p>';
-        
-        // Simulate real-time transcription
-        let transcriptText = '';
-        const samplePhrases = [
-            "Hello, how are you today?",
-            "I hope you're having a great day.",
-            "Let's discuss the project requirements.",
-            "Thank you for your time."
-        ];
-        
-        let phraseIndex = 0;
-        recordingInterval = setInterval(() => {
-            if (phraseIndex < samplePhrases.length) {
-                transcriptText += samplePhrases[phraseIndex] + ' ';
-                sourceTranscript.innerHTML = `<p>${transcriptText}</p>`;
-                
-                // Simulate translation
-                const translations = [
-                    "Hola, ¿cómo estás hoy?",
-                    "Espero que tengas un gran día.",
-                    "Discutamos los requisitos del proyecto.",
-                    "Gracias por tu tiempo."
-                ];
-                
-                setTimeout(() => {
-                    let translatedText = '';
-                    for (let i = 0; i <= phraseIndex; i++) {
-                        translatedText += translations[i] + ' ';
-                    }
-                    targetTranscript.innerHTML = `<p>${translatedText}</p>`;
-                }, 500);
-                
-                phraseIndex++;
-            } else {
-                stopRecording();
-            }
-        }, 3000);
-    } else {
-        stopRecording();
-    }
-}
-
-function stopRecording() {
-    isRecording = false;
-    const micButton = document.getElementById('micButton');
-    if (micButton) {
-        micButton.classList.remove('recording');
-    }
-    clearInterval(recordingInterval);
-}
-
+// Placeholder functions for UI interactions
 function playTranslation() {
     showNotification('🔊 Playing translated audio...', 'info');
-}
-
-function saveTranscript() {
-    showNotification('💾 Transcript saved successfully!', 'success');
 }
 
 function shareSession() {
@@ -526,19 +836,33 @@ function shareSession() {
     });
 }
 
-function exportTranscript() {
+function exportTranscript(transcriptId) {
     showNotification('📄 Transcript exported as PDF', 'success');
 }
 
-function createNewSession() {
-    const sessionId = 'SES-' + Math.floor(Math.random() * 10000);
-    const accessKey = Math.random().toString(36).substring(2, 15).toUpperCase();
-    showNotification(`✅ New session created! Session ID: ${sessionId}, Access Key: ${accessKey}`, 'success');
+function viewTranscript(transcriptId) {
+    showNotification('Opening transcript viewer...', 'info');
 }
 
-// Add ripple animation keyframes
-const rippleStyle = document.createElement('style');
-rippleStyle.textContent = `
+function joinSession(sessionId) {
+    showNotification('Joining session...', 'info');
+}
+
+function editSession(sessionId) {
+    showNotification('Opening session settings...', 'info');
+}
+
+// Add notification animations
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
     @keyframes ripple {
         to {
             transform: scale(4);
@@ -546,12 +870,11 @@ rippleStyle.textContent = `
         }
     }
 `;
-document.head.appendChild(rippleStyle);
+document.head.appendChild(notificationStyles);
 
 // Make functions globally available
 window.openProfileModal = openProfileModal;
 window.closeProfileModal = closeProfileModal;
-window.handleProfilePictureChange = handleProfilePictureChange;
 window.handleLogout = handleLogout;
 window.showPage = showPage;
 window.toggleSidebar = toggleSidebar;
@@ -561,3 +884,6 @@ window.saveTranscript = saveTranscript;
 window.shareSession = shareSession;
 window.exportTranscript = exportTranscript;
 window.createNewSession = createNewSession;
+window.viewTranscript = viewTranscript;
+window.joinSession = joinSession;
+window.editSession = editSession;
