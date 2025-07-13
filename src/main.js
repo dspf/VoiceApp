@@ -1,4 +1,5 @@
 // Import authentication functions
+import { checkAuthState } from './auth.js';
 
 // Enhanced Loading Animation
 window.addEventListener('load', function() {
