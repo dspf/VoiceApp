@@ -5,6 +5,8 @@ import { dashboardAPI } from './lib/dashboard-api.js'
 let currentUser = null;
 let userProfile = null;
 let userSettings = null;
+let subscriptionPlans = [];
+let currentSubscription = null;
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async function() {
@@ -70,6 +72,9 @@ async function loadDashboardData() {
         
         // Load current usage
         await loadCurrentUsage();
+        
+        // Load subscription data
+        await loadSubscriptionData();
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -163,6 +168,54 @@ async function loadCurrentUsage() {
     updateProgressBar('api', apiCalls, apiLimit);
 }
 
+// Load subscription data
+async function loadSubscriptionData() {
+    try {
+        // Load subscription plans
+        const { data: plans, error: plansError } = await dashboardAPI.getSubscriptionPlans();
+        if (!plansError && plans) {
+            subscriptionPlans = plans;
+        }
+        
+        // Load current subscription
+        const { data: subscription, error: subError } = await dashboardAPI.getUserSubscription(currentUser.id);
+        if (!subError) {
+            currentSubscription = subscription;
+        }
+        
+        // Update billing UI
+        updateBillingInterface();
+        
+    } catch (error) {
+        console.error('Error loading subscription data:', error);
+    }
+}
+
+// Update billing interface
+function updateBillingInterface() {
+    // Update current plan info
+    const planNameEl = document.getElementById('currentPlanName');
+    const planPriceEl = document.getElementById('currentPlanPrice');
+    const planStatusEl = document.getElementById('currentPlanStatus');
+    
+    if (currentSubscription && currentSubscription.subscription_plans) {
+        const plan = currentSubscription.subscription_plans;
+        if (planNameEl) planNameEl.textContent = plan.name || 'Professional Plan';
+        if (planPriceEl) planPriceEl.textContent = `$${plan.amount || 49}/month`;
+        if (planStatusEl) {
+            planStatusEl.textContent = currentSubscription.status || 'active';
+            planStatusEl.className = `plan-status ${currentSubscription.status || 'active'}`;
+        }
+    } else {
+        if (planNameEl) planNameEl.textContent = userProfile?.plan_type || 'Free Plan';
+        if (planPriceEl) planPriceEl.textContent = '$0/month';
+        if (planStatusEl) {
+            planStatusEl.textContent = 'free';
+            planStatusEl.className = 'plan-status free';
+        }
+    }
+}
+
 // Update progress bar
 function updateProgressBar(type, used, limit) {
     const percentage = Math.min((used / limit) * 100, 100);
@@ -173,9 +226,34 @@ function updateProgressBar(type, used, limit) {
         
         if (progressBar) {
             progressBar.style.width = percentage + '%';
+            // Add color coding based on usage
+            if (percentage > 90) {
+                progressBar.style.background = 'linear-gradient(90deg, #dc3545, #fd7e14)';
+            } else if (percentage > 75) {
+                progressBar.style.background = 'linear-gradient(90deg, #ffc107, #fd7e14)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #667eea, #764ba2)';
+            }
         }
         if (usageText) {
             usageText.querySelector('span:last-child').textContent = `${used.toLocaleString()} / ${limit.toLocaleString()}`;
+        }
+    } else if (type === 'api') {
+        const apiProgressBar = document.getElementById('apiCallsProgress');
+        const apiUsageText = document.getElementById('usageApiCalls');
+        
+        if (apiProgressBar) {
+            apiProgressBar.style.width = percentage + '%';
+            if (percentage > 90) {
+                apiProgressBar.style.background = 'linear-gradient(90deg, #dc3545, #fd7e14)';
+            } else if (percentage > 75) {
+                apiProgressBar.style.background = 'linear-gradient(90deg, #ffc107, #fd7e14)';
+            } else {
+                apiProgressBar.style.background = 'linear-gradient(90deg, #28a745, #20c997)';
+            }
+        }
+        if (apiUsageText) {
+            apiUsageText.textContent = `${used.toLocaleString()} / ${limit.toLocaleString()}`;
         }
     }
 }
@@ -501,6 +579,9 @@ async function loadTranscriptsPage() {
 
 // Load billing page data
 async function loadBillingPage() {
+    // Load subscription data first
+    await loadSubscriptionData();
+    
     const { data: billingHistory, error } = await dashboardAPI.getBillingHistory(currentUser.id);
     
     if (error) {
@@ -568,6 +649,154 @@ async function loadSettingsPage() {
     const apiKeyInput = document.querySelector('input[value*="vt_sk_live_"]');
     if (apiKeyInput && userSettings.api_key) {
         apiKeyInput.value = userSettings.api_key.substring(0, 20) + '••••••••••••••••';
+    }
+}
+
+// Subscription Management Functions
+
+// Open plan selector modal
+async function openPlanSelector() {
+    const modal = document.getElementById('planModal');
+    const plansContainer = document.getElementById('plansComparison');
+    
+    if (!modal || !plansContainer) return;
+    
+    // Load plans if not already loaded
+    if (subscriptionPlans.length === 0) {
+        const { data: plans, error } = await dashboardAPI.getSubscriptionPlans();
+        if (!error && plans) {
+            subscriptionPlans = plans;
+        }
+    }
+    
+    // Render plans
+    plansContainer.innerHTML = subscriptionPlans.map(plan => {
+        const isCurrent = currentSubscription && 
+                         currentSubscription.subscription_plans && 
+                         currentSubscription.subscription_plans.id === plan.id;
+        
+        const isPopular = plan.name.toLowerCase().includes('professional');
+        
+        return `
+            <div class="plan-card ${isCurrent ? 'current' : ''} ${isPopular ? 'popular' : ''}">
+                <h4 class="plan-name">${plan.name}</h4>
+                <div class="plan-price">
+                    <span class="currency">$</span>${plan.amount}
+                    <span class="period">/month</span>
+                </div>
+                <p class="plan-description">${plan.description || `Perfect for ${plan.name.toLowerCase()} users`}</p>
+                <ul class="plan-features">
+                    <li>${plan.monthly_minutes.toLocaleString()} translation minutes</li>
+                    <li>${plan.monthly_api_calls ? plan.monthly_api_calls.toLocaleString() + ' API calls' : 'Unlimited API calls'}</li>
+                    <li>${plan.features ? plan.features.join('</li><li>') : 'Standard features'}</li>
+                    ${plan.name.toLowerCase().includes('enterprise') ? '<li>Priority support</li><li>Custom integrations</li>' : ''}
+                </ul>
+                <button class="plan-button ${isCurrent ? 'current' : 'primary'}" 
+                        onclick="${isCurrent ? '' : `selectPlan('${plan.stripe_price_id}')`}"
+                        ${isCurrent ? 'disabled' : ''}>
+                    ${isCurrent ? 'Current Plan' : 'Select Plan'}
+                </button>
+            </div>
+        `;
+    }).join('');
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close plan selector modal
+function closePlanModal() {
+    const modal = document.getElementById('planModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Select a subscription plan
+async function selectPlan(priceId) {
+    const loadingModal = document.getElementById('billingLoadingModal');
+    const loadingMessage = document.getElementById('loadingMessage');
+    
+    // Show loading modal
+    if (loadingModal) {
+        loadingModal.style.display = 'block';
+        if (loadingMessage) loadingMessage.textContent = 'Creating checkout session...';
+    }
+    
+    try {
+        const { data, error } = await dashboardAPI.createCheckoutSession(priceId);
+        
+        if (error) {
+            throw error;
+        }
+        
+        if (data.checkout_url) {
+            // Update loading message
+            if (loadingMessage) loadingMessage.textContent = 'Redirecting to checkout...';
+            
+            // Redirect to Stripe checkout
+            window.location.href = data.checkout_url;
+        }
+    } catch (error) {
+        console.error('Error creating checkout session:', error);
+        showNotification('Failed to create checkout session. Please try again.', 'error');
+        
+        // Hide loading modal
+        if (loadingModal) {
+            loadingModal.style.display = 'none';
+        }
+    }
+}
+
+// Open Stripe customer portal
+async function openCustomerPortal() {
+    const loadingModal = document.getElementById('billingLoadingModal');
+    const loadingMessage = document.getElementById('loadingMessage');
+    
+    // Show loading modal
+    if (loadingModal) {
+        loadingModal.style.display = 'block';
+        if (loadingMessage) loadingMessage.textContent = 'Opening billing portal...';
+    }
+    
+    try {
+        const { data, error } = await dashboardAPI.createPortalSession();
+        
+        if (error) {
+            throw error;
+        }
+        
+        if (data.portal_url) {
+            // Redirect to Stripe customer portal
+            window.location.href = data.portal_url;
+        }
+    } catch (error) {
+        console.error('Error opening customer portal:', error);
+        showNotification('Failed to open billing portal. Please try again.', 'error');
+        
+        // Hide loading modal
+        if (loadingModal) {
+            loadingModal.style.display = 'none';
+        }
+    }
+}
+
+// Handle successful checkout (called from URL params)
+function handleCheckoutSuccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    if (sessionId) {
+        showNotification('🎉 Subscription activated successfully!', 'success');
+        
+        // Reload subscription data
+        setTimeout(() => {
+            loadSubscriptionData();
+        }, 2000);
+        
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 }
 
@@ -732,11 +961,17 @@ function showPage(pageId) {
         case 'settings':
             loadSettingsPage();
             break;
+        case 'billing':
+            loadBillingPage();
+            break;
     }
 }
 
 // Initialize dashboard functionality
 function initializeDashboard() {
+    // Handle checkout success
+    handleCheckoutSuccess();
+    
     // Add click handlers to nav links
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -892,3 +1127,7 @@ window.createNewSession = createNewSession;
 window.viewTranscript = viewTranscript;
 window.joinSession = joinSession;
 window.editSession = editSession;
+window.openPlanSelector = openPlanSelector;
+window.closePlanModal = closePlanModal;
+window.selectPlan = selectPlan;
+window.openCustomerPortal = openCustomerPortal;

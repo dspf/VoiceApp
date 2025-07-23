@@ -725,6 +725,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <link rel="stylesheet" href="./src/dashboard-styles.css">
 </head>
 <body>
     <!-- Profile Modal -->
@@ -1364,10 +1365,21 @@
                             <p style="font-size: 2rem; margin: 1rem 0;">R1000/month</p>
                             <p>✅ 5,000 minutes/month</p>
                             <p>✅ 100+ languages</p>
-                            <p>✅ Premium support</p>
-                            <button class="btn btn-primary" style="margin-top: 1rem;">Upgrade Plan</button>
-                        </div>
-                    </div>
+                            <div class="plan-info" id="currentPlanInfo">
+                                <span class="plan-name" id="currentPlanName">Loading...</span>
+                                <span class="plan-price" id="currentPlanPrice">Loading...</span>
+                                <span class="plan-status" id="currentPlanStatus"></span>
+                            </div>
+                            <div class="plan-actions">
+                                <button class="btn btn-secondary" onclick="openPlanSelector()">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    Change Plan
+                                </button>
+                                <button class="btn btn-secondary" onclick="openCustomerPortal()">
+                                    <i class="fas fa-cog"></i>
+                                    Manage Billing
+                                </button>
+                            </div>
 
                     <div class="form-section">
                         <h3>📊 Usage This Month</h3>
@@ -1376,18 +1388,26 @@
                                 <span>Translation Minutes</span>
                                 <span>2,847 / 5,000</span>
                             </div>
-                            <div class="progress-bar">
+                                <span id="usageMinutes">Loading...</span>
                                 <div class="progress-fill" style="width: 57%;"></div>
                             </div>
-                        </div>
+                                <div class="progress-fill" id="minutesProgress"></div>
                         <div style="margin: 1rem 0;">
                             <div style="display: flex; justify-content: space-between;">
                                 <span>API Calls</span>
-                                <span>12,450 / 50,000</span>
+                                <span id="usageApiCalls">Loading...</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 25%;"></div>
+                                <div class="progress-fill" id="apiCallsProgress"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscription Plans Section -->
+                    <div class="subscription-plans" id="subscriptionPlans" style="display: none;">
+                        <h3>Choose Your Plan</h3>
+                        <div class="plans-grid" id="plansGrid">
+                            <!-- Plans will be loaded dynamically -->
                         </div>
                     </div>
                 </div>
@@ -1690,6 +1710,28 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Selection Modal -->
+    <div id="planModal" class="modal">
+        <div class="modal-content plan-modal">
+            <span class="close" onclick="closePlanModal()">&times;</span>
+            <h2>Choose Your Plan</h2>
+            <div class="plans-comparison" id="plansComparison">
+                <!-- Plans will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Billing Loading Modal -->
+    <div id="billingLoadingModal" class="modal">
+        <div class="modal-content loading-modal">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h3>Processing...</h3>
+                <p id="loadingMessage">Setting up your subscription...</p>
             </div>
         </div>
     </div>
