@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js'
+import { stripeAPI } from './stripe-api.js'
 
 // Dashboard API functions for all sidebar navigation features
 
@@ -160,6 +161,31 @@ export const dashboardAPI = {
     }
   },
 
+  // Get subscription plans
+  async getSubscriptionPlans() {
+    return await stripeAPI.getSubscriptionPlans()
+  },
+
+  // Get user subscription
+  async getUserSubscription(userId) {
+    return await stripeAPI.getUserSubscription(userId)
+  },
+
+  // Create checkout session
+  async createCheckoutSession(priceId) {
+    return await stripeAPI.createCheckoutSession(priceId)
+  },
+
+  // Manage subscription
+  async manageSubscription(action, subscriptionId, newPriceId = null) {
+    return await stripeAPI.manageSubscription(action, subscriptionId, newPriceId)
+  },
+
+  // Create customer portal session
+  async createPortalSession() {
+    return await stripeAPI.createPortalSession()
+  },
+
   async getCurrentUsage(userId) {
     try {
       const startOfMonth = new Date()
@@ -177,10 +203,15 @@ export const dashboardAPI = {
       const totalMinutes = data.reduce((sum, day) => sum + (day.minutes_used || 0), 0)
       const totalApiCalls = data.reduce((sum, day) => sum + (day.api_calls_count || 0), 0)
       
+      // Get usage limits
+      const limits = await stripeAPI.getUsageLimits(userId)
+      
       return { 
         data: { 
           minutes_used: totalMinutes, 
-          api_calls_count: totalApiCalls 
+          api_calls_count: totalApiCalls,
+          monthly_limit: limits.monthlyMinutes,
+          plan_type: limits.planType
         }, 
         error: null 
       }
