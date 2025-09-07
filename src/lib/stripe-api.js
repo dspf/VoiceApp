@@ -159,7 +159,7 @@ export const stripeAPI = {
         `)
         .eq('user_id', userId)
         .eq('status', 'active')
-        .single()
+        .maybeSingle()
 
       if (error && error.code !== 'PGRST116') {
         throw error
@@ -188,7 +188,7 @@ export const stripeAPI = {
         .from('user_profiles')
         .select('monthly_limit_minutes, plan_type')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (!profile) {
         return { monthlyMinutes: 1000, planType: 'free' }
