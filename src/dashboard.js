@@ -1131,3 +1131,237 @@ window.openPlanSelector = openPlanSelector;
 window.closePlanModal = closePlanModal;
 window.selectPlan = selectPlan;
 window.openCustomerPortal = openCustomerPortal;
+window.sendMessage = sendMessage;
+window.clearChat = clearChat;
+window.toggleVoiceInput = toggleVoiceInput;
+
+// Chat functionality
+let isVoiceInputActive = false;
+let recognition = null;
+
+// Initialize speech recognition if available
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('chatInput').value = transcript;
+        sendMessage();
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        showNotification('Voice input failed. Please try again.', 'error');
+        stopVoiceInput();
+    };
+    
+    recognition.onend = function() {
+        stopVoiceInput();
+    };
+}
+
+// Send message function
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Clear input
+    input.value = '';
+    
+    // Add message to chat
+    addMessageToChat(message, 'sent');
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate translation delay
+    setTimeout(() => {
+        translateAndAddMessage(message);
+        hideTypingIndicator();
+    }, 1000 + Math.random() * 1000);
+}
+
+// Add message to chat
+function addMessageToChat(message, type, translation = null) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageGroup = document.createElement('div');
+    messageGroup.className = 'message-group';
+    
+    const messageBubble = document.createElement('div');
+    messageBubble.className = `message-bubble ${type}`;
+    
+    const messageContent = document.createElement('p');
+    messageContent.className = 'message-content';
+    messageContent.textContent = message;
+    messageBubble.appendChild(messageContent);
+    
+    // Add translation if provided
+    if (translation && translation !== message) {
+        const translationDiv = document.createElement('div');
+        translationDiv.className = 'message-translation';
+        translationDiv.textContent = `Translation: ${translation}`;
+        messageBubble.appendChild(translationDiv);
+    }
+    
+    // Add timestamp
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    messageBubble.appendChild(timeDiv);
+    
+    messageGroup.appendChild(messageBubble);
+    chatMessages.appendChild(messageGroup);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Translate message and add to chat
+function translateAndAddMessage(originalMessage) {
+    const targetLanguage = document.getElementById('chatTargetLanguage').value;
+    
+    // Simulate translation (in real app, this would call a translation API)
+    const translations = {
+        'es': {
+            'Hello': 'Hola',
+            'How are you?': '¿Cómo estás?',
+            'Good morning': 'Buenos días',
+            'Thank you': 'Gracias',
+            'Goodbye': 'Adiós'
+        },
+        'fr': {
+            'Hello': 'Bonjour',
+            'How are you?': 'Comment allez-vous?',
+            'Good morning': 'Bonjour',
+            'Thank you': 'Merci',
+            'Goodbye': 'Au revoir'
+        },
+        'de': {
+            'Hello': 'Hallo',
+            'How are you?': 'Wie geht es dir?',
+            'Good morning': 'Guten Morgen',
+            'Thank you': 'Danke',
+            'Goodbye': 'Auf Wiedersehen'
+        }
+    };
+    
+    // Get translation or simulate one
+    let translatedMessage = originalMessage;
+    if (translations[targetLanguage] && translations[targetLanguage][originalMessage]) {
+        translatedMessage = translations[targetLanguage][originalMessage];
+    } else if (targetLanguage !== 'en') {
+        // Simulate translation by adding language prefix
+        const languageNames = {
+            'es': 'Spanish',
+            'fr': 'French',
+            'de': 'German',
+            'it': 'Italian',
+            'pt': 'Portuguese',
+            'ru': 'Russian',
+            'ja': 'Japanese',
+            'ko': 'Korean',
+            'zh': 'Chinese',
+            'ar': 'Arabic',
+            'hi': 'Hindi'
+        };
+        translatedMessage = `[${languageNames[targetLanguage]}] ${originalMessage}`;
+    }
+    
+    // Add translated message as received
+    addMessageToChat(translatedMessage, 'received', targetLanguage !== 'en' ? translatedMessage : null);
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.style.display = 'flex';
+    }
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.style.display = 'none';
+    }
+}
+
+// Clear chat
+function clearChat() {
+    if (confirm('Are you sure you want to clear the chat history?')) {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = `
+            <div class="welcome-message">
+                <div class="message-bubble system">
+                    <i class="fas fa-robot"></i>
+                    <p>Welcome to Live Chat Translation! Messages will be automatically translated to your selected language.</p>
+                </div>
+            </div>
+        `;
+        showNotification('Chat cleared successfully!', 'success');
+    }
+}
+
+// Toggle voice input
+function toggleVoiceInput() {
+    if (!recognition) {
+        showNotification('Voice input is not supported in your browser.', 'error');
+        return;
+    }
+    
+    if (isVoiceInputActive) {
+        stopVoiceInput();
+    } else {
+        startVoiceInput();
+    }
+}
+
+// Start voice input
+function startVoiceInput() {
+    if (!recognition) return;
+    
+    isVoiceInputActive = true;
+    const voiceIcon = document.getElementById('voiceIcon');
+    const voiceBtn = voiceIcon.closest('button');
+    
+    voiceIcon.className = 'fas fa-stop';
+    voiceBtn.classList.add('recording');
+    voiceBtn.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+    
+    recognition.start();
+    showNotification('🎤 Listening... Speak now', 'info');
+}
+
+// Stop voice input
+function stopVoiceInput() {
+    if (!recognition) return;
+    
+    isVoiceInputActive = false;
+    const voiceIcon = document.getElementById('voiceIcon');
+    const voiceBtn = voiceIcon.closest('button');
+    
+    voiceIcon.className = 'fas fa-microphone';
+    voiceBtn.classList.remove('recording');
+    voiceBtn.style.background = '';
+    
+    recognition.stop();
+}
+
+// Handle Enter key in chat input
+document.addEventListener('DOMContentLoaded', function() {
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+});

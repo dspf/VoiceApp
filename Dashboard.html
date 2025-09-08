@@ -859,6 +859,9 @@
             <li><a href="#" class="nav-link" data-page="transcripts">
                 <span class="icon">📝</span> Transcripts
             </a></li>
+            <li><a href="#" class="nav-link" data-page="chat">
+                <span class="icon">💬</span> Chat
+            </a></li>
             <li><a href="#" class="nav-link" data-page="sessions">
                 <span class="icon">🔗</span> Sessions
             </a></li>
@@ -1125,6 +1128,68 @@
                     <button class="btn btn-primary" onclick="saveTranscript()">💾 Save Transcript</button>
                     <button class="btn btn-secondary" onclick="shareSession()">🔗 Share Session</button>
                     <button class="btn btn-secondary" onclick="exportTranscript()">📄 Export</button>
+                </div>
+            </div>
+
+            <!-- Chat Page -->
+            <div id="chat" class="page">
+                <div class="page-header">
+                    <h1 id="page-title">Live Chat Translation</h1>
+                    <div class="header-actions">
+                        <div class="language-selector">
+                            <label for="chatTargetLanguage">Translate to:</label>
+                            <select id="chatTargetLanguage" class="language-select">
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ru">Russian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ko">Korean</option>
+                                <option value="zh">Chinese</option>
+                                <option value="ar">Arabic</option>
+                                <option value="hi">Hindi</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" onclick="clearChat()">
+                            <i class="fas fa-trash"></i>
+                            Clear Chat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <div class="message-bubble system">
+                                <i class="fas fa-robot"></i>
+                                <p>Welcome to Live Chat Translation! Messages will be automatically translated to your selected language.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <input type="text" id="chatInput" placeholder="Type your message..." class="chat-input">
+                            <button class="btn btn-primary send-btn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="chat-controls">
+                            <button class="btn btn-secondary" onclick="toggleVoiceInput()">
+                                <i class="fas fa-microphone" id="voiceIcon"></i>
+                                Voice Input
+                            </button>
+                            <span class="typing-indicator" id="typingIndicator" style="display: none;">
+                                <i class="fas fa-circle"></i>
+                                <i class="fas fa-circle"></i>
+                                <i class="fas fa-circle"></i>
+                                Translating...
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
