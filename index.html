@@ -6,7 +6,7 @@
     <title>uLIMITT - AI-Powered Voice Translation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./src/styles.css">
+    <link rel="stylesheet" href="/src/styles.css">
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -27,7 +27,7 @@
     <header id="header">
         <nav class="container">
             <a href="#" class="logo">
-                <img src="src/assets/ulimitt-logo.svg" alt="uLIMITT" class="logo-icon" style="height: 40px; width: auto;">
+                <span class="logo-icon">🎯</span>
                 uLIMITT
             </a>
             <ul class="nav-links">
@@ -51,9 +51,6 @@
 
     <!-- Enhanced Hero Section -->
     <section class="hero">
-        <div class="hero-background">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB2aWV3Qm94PSIwIDAgMTkyMCAxMDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZGVmcz4KPHN0eWxlPgouY2xzLTEgeyBmaWxsOiAjMDAwMDAwOyB9Ci5jbHMtMiB7IGZpbGw6ICNGRjQ0NDQ7IG9wYWNpdHk6IDAuMTU7IH0KLmNscy0zIHsgZmlsbDogI0ZGRkZGRjsgb3BhY2l0eTogMC4wNTsgfQouY2xzLTQgeyBmaWxsOiAjRkY0NDQ0OyBvcGFjaXR5OiAwLjI7IH0KLmNscy01IHsgZmlsbDogI0ZGRkZGRjsgb3BhY2l0eTogMC4xOyB9Ci5jbHMtNiB7IGZpbGw6ICNGRjQ0NDQ7IG9wYWNpdHk6IDAuMDg7IH0KPC9zdHlsZT4KPC9kZWZzPgo8cmVjdCBjbGFzcz0iY2xzLTEiIHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiLz4KPGNpcmNsZSBjbGFzcz0iY2xzLTIiIGN4PSI0ODAiIGN5PSIyNzAiIHI9IjMwMCIvPgo8Y2lyY2xlIGNsYXNzPSJjbHMtMyIgY3g9IjE0NDAiIGN5PSI4MTAiIHI9IjI1MCIvPgo8Y2lyY2xlIGNsYXNzPSJjbHMtNCIgY3g9IjE2MDAiIGN5PSIyMDAiIHI9IjE4MCIvPgo8Y2lyY2xlIGNsYXNzPSJjbHMtNSIgY3g9IjMyMCIgY3k9Ijg2MCIgcj0iMjIwIi8+CjxjaXJjbGUgY2xhc3M9ImNscy02IiBjeD0iOTYwIiBjeT0iNTQwIiByPSI0MDAiLz4KPHBhdGggZD0iTTAgMEwxOTIwIDAgTDE5MjAgNTQwIEwwIDEwODBaIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjQ0NDQiIHN0b3Atb3BhY2l0eT0iMC4xIi8+CjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRjQ0NDQiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjx0ZXh0IHg9Ijk2MCIgeT0iNDUwIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNzIiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNGRkZGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnVMSU1JVFQgQUk8L3RleHQ+Cjx0ZXh0IHg9Ijk2MCIgeT0iNTUwIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYiIGZvbnQtd2VpZ2h0PSI0MDAiIGZpbGw9IiNGRkZGRkYiIG9wYWNpdHk9IjAuOSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUktUG93ZXJlZCBWb2ljZSBUcmFuc2xhdGlvbjwvdGV4dD4KPHN2ZyB4PSI3MDAiIHk9IjYwMCIgd2lkdGg9IjUyMCIgaGVpZ2h0PSIxMDAiPgo8cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjEwMCIgZmlsbD0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjEpIiByeD0iNTAiLz4KPHN2ZyB4PSI1MCIgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjI1IiBmaWxsPSIjRkY0NDQ0Ii8+Cjx0ZXh0IHg9IjMwIiB5PSI0MCIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSIjRkZGRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4yNPC90ZXh0Pgo8L3N2Zz4KPHR5cGUgeD0iMTMwIiB5PSI2NSIgZm9udC1mYW1pbHk9IkludGVyLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iNTAwIiBmaWxsPSIjRkZGRkZGIj5TcGVhayBhbnkgbGFuZ3VhZ2UsIGFueXdoZXJlPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+" alt="uLIMITT AI Voice Translation">
-        </div>
         <div class="hero-content">
             <h1 class="hero-title">Break Language Barriers with AI</h1>
             <p class="hero-subtitle">Real-time voice translation and transcription powered by advanced AI technology</p>
@@ -241,6 +238,6 @@
         </div>
     </footer>
 
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>
