@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceTranslate Dashboard</title>
+    <title>uLIMITT Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -13,8 +13,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f6fa;
-            color: #333;
+            background: #000000;
+            color: #FFFFFF;
         }
 
         /* Sidebar */
@@ -24,7 +24,7 @@
             top: 0;
             width: 260px;
             height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF4444 0%, #CC3333 100%);
             color: white;
             padding: 1.5rem 0;
             z-index: 1000;
@@ -62,7 +62,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            color: #667eea;
+            color: #FF4444;
             font-weight: bold;
             border: 2px solid rgba(255, 255, 255, 0.3);
             overflow: hidden;
@@ -99,6 +99,14 @@
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
         }
 
         .company-name {
@@ -199,7 +207,7 @@
         }
 
         .credits-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -221,7 +229,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
             color: white;
         }
 
@@ -283,7 +291,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
             color: white;
             border-radius: 16px 16px 0 0;
         }
@@ -342,7 +350,7 @@
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            color: #667eea;
+            color: #FF4444;
             font-weight: bold;
             border: 4px solid #e9ecef;
             margin-bottom: 1rem;
@@ -357,7 +365,7 @@
         }
 
         .upload-btn {
-            background: #667eea;
+            background: #FF4444;
             color: white;
             border: none;
             padding: 0.5rem 1rem;
@@ -390,7 +398,7 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #FF4444;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
@@ -429,16 +437,16 @@
         }
 
         .stat-card {
-            background: white;
+            background: #333333;
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-left: 4px solid #FF4444;
         }
 
         .stat-card h3 {
             font-size: 0.9rem;
-            color: #666;
+            color: #FFFFFF;
             margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -447,7 +455,7 @@
         .stat-card .value {
             font-size: 2rem;
             font-weight: bold;
-            color: #333;
+            color: #FF4444;
             margin-bottom: 0.5rem;
         }
 
@@ -465,18 +473,19 @@
         }
 
         .action-card {
-            background: white;
+            background: #333333;
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            color: #FFFFFF;
         }
 
         .action-card:hover {
-            border-color: #667eea;
+            border-color: #FF4444;
             transform: translateY(-2px);
         }
 
@@ -487,9 +496,9 @@
 
         /* Tables */
         .table-container {
-            background: white;
+            background: #333333;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
@@ -570,7 +579,7 @@
 
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #FF4444;
         }
 
         /* Translation Interface */
@@ -605,7 +614,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
             color: white;
             border: none;
             font-size: 2rem;
@@ -715,7 +724,7 @@
             width: 16px;
             height: 16px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
+            border-top: 2px solid #FF4444;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -796,7 +805,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Available Credits</label>
-                                <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;" id="availableCredits">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #FF4444;" id="availableCredits">
                                     2,450 credits
                                 </div>
                             </div>
@@ -832,6 +841,13 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
+            <!-- Logo Section -->
+            <div class="logo">
+                <img src="src/assets/ulimitt-logo.svg" alt="uLIMITT" style="height: 32px; width: auto;">
+                <span>uLIMITT</span>
+            </div>
+            <div class="company-name" id="companyName">Voice Translation Platform</div>
+            
             <!-- Profile Section -->
             <div class="profile-section" onclick="openProfileModal()">
                 <div class="profile-picture" id="profilePicture">
@@ -847,7 +863,6 @@
             <button class="btn btn-secondary" onclick="handleLogout()" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
                 <span>🚪</span> Sign Out
             </button>
-            <div class="company-name" id="companyName">Acme Corporation</div>
         </div>
         <ul class="sidebar-nav">
             <li><a href="#" class="nav-link active" data-page="dashboard">
@@ -904,7 +919,7 @@
                     <!-- Grouped Stat Cards -->
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2.2rem; background: #667eea; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <div style="font-size: 2.2rem; background: #FF4444; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
                                 🔗
                             </div>
                             <div>
@@ -914,7 +929,7 @@
                             </div>
                         </div>
                         <div class="stat-card" style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 2.2rem; background: #764ba2; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <div style="font-size: 2.2rem; background: #000000; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
                                 ⏱️
                             </div>
                             <div>
@@ -965,7 +980,7 @@
                                         {
                                             label: 'Sessions',
                                             data: [180, 220, 300, 400, 350, 420, 500],
-                                            borderColor: '#667eea',
+                                            borderColor: '#FF4444',
                                             backgroundColor: 'rgba(102,126,234,0.1)',
                                             tension: 0.4,
                                             fill: true,
@@ -974,7 +989,7 @@
                                         {
                                             label: 'Minutes',
                                             data: [3200, 4100, 5000, 6000, 5800, 6700, 7200],
-                                            borderColor: '#764ba2',
+                                            borderColor: '#000000',
                                             backgroundColor: 'rgba(118,75,162,0.1)',
                                             tension: 0.4,
                                             fill: true,
@@ -1293,7 +1308,7 @@
                 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem;">
                     <!-- Group 1: Usage Summary -->
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #FF4444 0%, #000000 100%); color: #fff;">
                             <h3>This Month</h3>
                             <div class="value">2,847</div>
                             <div class="change">Minutes translated</div>
@@ -1311,7 +1326,7 @@
                             <div class="value">EN→ES</div>
                             <div class="change">Language pair</div>
                         </div>
-                        <div class="stat-card" style="background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); color: #fff;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #000000 0%, #FF4444 100%); color: #fff;">
                             <h3>Peak Hours</h3>
                             <div class="value">2-4 PM</div>
                             <div class="change">UTC timezone</div>
@@ -1378,7 +1393,7 @@
                                     datasets: [{
                                         data: [38, 27, 14, 9, 7, 5],
                                         backgroundColor: [
-                                            '#667eea', '#28a745', '#ffc107', '#764ba2', '#ff9800', '#dc3545'
+                                            '#FF4444', '#28a745', '#ffc107', '#000000', '#ff9800', '#dc3545'
                                         ]
                                     }]
                                 },
@@ -1399,7 +1414,7 @@
                                     datasets: [{
                                         label: 'Minutes Translated',
                                         data: [320, 410, 500, 600, 580, 670, 720],
-                                        borderColor: '#667eea',
+                                        borderColor: '#FF4444',
                                         backgroundColor: 'rgba(102,126,234,0.1)',
                                         tension: 0.4,
                                         fill: true,
@@ -1426,7 +1441,7 @@
                     <div class="form-section">
                         <h3>💳 Current Plan</h3>
                         <div style="text-align: center; padding: 2rem;">
-                            <h2 style="color: #667eea;">Professional Plan</h2>
+                            <h2 style="color: #FF4444;">Professional Plan</h2>
                             <p style="font-size: 2rem; margin: 1rem 0;">R1000/month</p>
                             <p>✅ 5,000 minutes/month</p>
                             <p>✅ 100+ languages</p>
@@ -1753,22 +1768,22 @@
                         <div class="form-section" style="min-width: 280px;">
                             <h3>📚 Knowledge Base</h3>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     📖 Getting Started Guide
                                 </a>
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     🎤 How to Use Live Translation
                                 </a>
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     🔧 API Documentation
                                 </a>
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     ❓ Frequently Asked Questions
                                 </a>
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     🔒 Privacy & Security
                                 </a>
-                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #667eea; background: #f8f9fa; border-radius: 4px;">
+                                <a href="#" style="padding: 0.5rem; text-decoration: none; color: #FF4444; background: #f8f9fa; border-radius: 4px;">
                                     💳 Billing & Pricing
                                 </a>
                             </div>

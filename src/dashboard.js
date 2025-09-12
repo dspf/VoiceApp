@@ -232,7 +232,7 @@ function updateProgressBar(type, used, limit) {
             } else if (percentage > 75) {
                 progressBar.style.background = 'linear-gradient(90deg, #ffc107, #fd7e14)';
             } else {
-                progressBar.style.background = 'linear-gradient(90deg, #667eea, #764ba2)';
+                progressBar.style.background = 'linear-gradient(90deg, #FF4444, #000000)';
             }
         }
         if (usageText) {
@@ -842,7 +842,7 @@ function showNotification(message, type = 'info') {
         success: '#28a745',
         error: '#dc3545',
         warning: '#ffc107',
-        info: '#667eea'
+        info: '#FF4444'
     };
     
     notification.style.backgroundColor = colors[type] || colors.info;
@@ -1011,7 +1011,7 @@ function initializeDashboard() {
     // Form focus effects
     document.querySelectorAll('input, select, textarea').forEach(element => {
         element.addEventListener('focus', function() {
-            this.style.borderColor = '#667eea';
+            this.style.borderColor = '#FF4444';
             this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
         });
         

@@ -1,0 +1,33 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="60" fill="#000000" rx="8"/>
+  
+  <!-- Red U shape -->
+  <path d="M15 15 L15 35 Q15 45 25 45 L35 45 Q45 45 45 35 L45 15 L40 15 L40 35 Q40 40 35 40 L25 40 Q20 40 20 35 L20 15 Z" fill="#FF4444"/>
+  
+  <!-- White L -->
+  <rect x="55" y="15" width="5" height="30" fill="#FFFFFF"/>
+  <rect x="55" y="40" width="15" height="5" fill="#FFFFFF"/>
+  
+  <!-- White I -->
+  <rect x="80" y="15" width="5" height="30" fill="#FFFFFF"/>
+  
+  <!-- White M -->
+  <path d="M95 15 L95 45 L100 45 L100 25 L107.5 35 L112.5 35 L120 25 L120 45 L125 45 L125 15 L118 15 L110 28 L102 15 Z" fill="#FFFFFF"/>
+  
+  <!-- White I -->
+  <rect x="135" y="15" width="5" height="30" fill="#FFFFFF"/>
+  
+  <!-- Red T -->
+  <rect x="150" y="15" width="25" height="5" fill="#FF4444"/>
+  <rect x="160" y="15" width="5" height="30" fill="#FF4444"/>
+  
+  <!-- Red T -->
+  <rect x="180" y="15" width="15" height="5" fill="#FF4444"/>
+  <rect x="185" y="15" width="5" height="30" fill="#FF4444"/>
+  
+  <!-- Geometric accent lines -->
+  <line x1="50" y1="20" x2="180" y2="20" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
+  <circle cx="185" cy="25" r="2" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="190" cy="30" r="1.5" fill="#FF4444" opacity="0.8"/>
+</svg>

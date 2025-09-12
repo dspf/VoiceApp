@@ -9,7 +9,7 @@
 }
 
 .current-plan {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
     color: white;
     padding: 2rem;
     border-radius: 16px;
@@ -105,7 +105,7 @@
 }
 
 .usage-item:first-child {
-    color: #667eea;
+    color: #FF4444;
 }
 
 .usage-item:last-child {
@@ -122,7 +122,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #FF4444, #000000);
     border-radius: 4px;
     transition: width 0.3s ease;
     position: relative;
@@ -197,7 +197,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #FF4444, #000000);
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -207,13 +207,13 @@
 }
 
 .plan-card:hover {
-    border-color: #667eea;
+    border-color: #FF4444;
     transform: translateY(-5px);
     box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
 }
 
 .plan-card.current {
-    border-color: #667eea;
+    border-color: #FF4444;
     background: linear-gradient(135deg, #f8faff 0%, #e8f4fd 100%);
 }
 
@@ -249,7 +249,7 @@
 .plan-price {
     font-size: 2.5rem;
     font-weight: 800;
-    color: #667eea;
+    color: #FF4444;
     margin-bottom: 0.5rem;
 }
 
@@ -314,7 +314,7 @@
 }
 
 .plan-button.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
     color: white;
 }
 
@@ -325,12 +325,12 @@
 
 .plan-button.secondary {
     background: #f8f9fa;
-    color: #667eea;
-    border: 2px solid #667eea;
+    color: #FF4444;
+    border: 2px solid #FF4444;
 }
 
 .plan-button.secondary:hover {
-    background: #667eea;
+    background: #FF4444;
     color: white;
 }
 
@@ -509,7 +509,7 @@
 }
 
 .message-bubble.sent {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FF4444 0%, #000000 100%);
     color: white;
     margin-left: auto;
     border-bottom-right-radius: 8px;
@@ -525,7 +525,7 @@
 
 .message-bubble.system {
     background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
+    color: #FF4444;
     margin: 0 auto;
     text-align: center;
     border-radius: 20px;
@@ -588,7 +588,7 @@
 
 .chat-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #FF4444;
     background: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -633,12 +633,12 @@
 
 .language-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #FF4444;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .typing-indicator {
-    color: #667eea;
+    color: #FF4444;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
