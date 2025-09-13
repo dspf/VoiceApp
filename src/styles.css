@@ -233,13 +233,7 @@ nav {
 
 .logo-icon {
     font-size: 2rem;
-    animation: logoFloat 3s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.3));
-}
-
-@keyframes logoFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-5px) rotate(5deg); }
 }
 
 .nav-links {
