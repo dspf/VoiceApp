@@ -151,21 +151,41 @@ async function loadRecentSessions() {
 
 // Load current usage for billing page
 async function loadCurrentUsage() {
-    const { data: usage, error } = await dashboardAPI.getCurrentUsage(currentUser.id);
-    
-    if (error) {
+    try {
+        const { data: usage, error } = await dashboardAPI.getCurrentUsage(currentUser.id);
+        
+        if (error) {
+            console.error('Error loading usage:', error);
+            // Use default values when API fails
+            const minutesUsed = 0;
+            const apiCalls = 0;
+            const monthlyLimit = userProfile?.monthly_limit_minutes || 5000;
+            const apiLimit = 50000;
+            
+            updateProgressBar('minutes', minutesUsed, monthlyLimit);
+            updateProgressBar('api', apiCalls, apiLimit);
+            return;
+        }
+        
+        // Update usage progress bars with real data
+        const minutesUsed = usage.minutes_used || 0;
+        const apiCalls = usage.api_calls_count || 0;
+        const monthlyLimit = userProfile?.monthly_limit_minutes || 5000;
+        const apiLimit = 50000;
+        
+        updateProgressBar('minutes', minutesUsed, monthlyLimit);
+        updateProgressBar('api', apiCalls, apiLimit);
+    } catch (error) {
         console.error('Error loading usage:', error);
-        return;
+        // Use default values when fetch fails
+        const minutesUsed = 0;
+        const apiCalls = 0;
+        const monthlyLimit = userProfile?.monthly_limit_minutes || 5000;
+        const apiLimit = 50000;
+        
+        updateProgressBar('minutes', minutesUsed, monthlyLimit);
+        updateProgressBar('api', apiCalls, apiLimit);
     }
-    
-    // Update usage progress bars
-    const minutesUsed = usage.minutes_used || 0;
-    const apiCalls = usage.api_calls_count || 0;
-    const monthlyLimit = userProfile?.monthly_limit_minutes || 5000;
-    const apiLimit = 50000;
-    
-    updateProgressBar('minutes', minutesUsed, monthlyLimit);
-    updateProgressBar('api', apiCalls, apiLimit);
 }
 
 // Load subscription data
